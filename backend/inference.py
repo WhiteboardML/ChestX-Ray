@@ -2,7 +2,7 @@ from typing import List, Dict, Any
 import torch
 import torchxrayvision as xrv
 
-from backend.config import MODEL_NAME
+from backend.config import MODEL_NAME, get_pathology_uz
 from backend.model_service import get_model, get_device
 from backend.preprocessing import preprocess_image
 
@@ -43,8 +43,10 @@ def run_inference(
     # Map raw scores dynamically to model.pathologies
     predictions: List[Dict[str, Any]] = []
     for pathology_name, score_val in zip(model.pathologies, scores):
+        eng_name = str(pathology_name)
         predictions.append({
-            "disease": str(pathology_name),
+            "disease": eng_name,
+            "disease_uz": get_pathology_uz(eng_name),
             "score": float(score_val)
         })
 

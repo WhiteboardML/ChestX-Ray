@@ -1,5 +1,28 @@
 import React, { useState, useEffect, useRef } from 'react';
 
+const diseaseUzMap = {
+  "Atelectasis": "Atelektaz",
+  "Consolidation": "Konsolidatsiya",
+  "Infiltration": "Infiltratsiya",
+  "Pneumothorax": "Pnevmotoraks",
+  "Edema": "O'pka shishi",
+  "Emphysema": "Emfizema",
+  "Fibrosis": "Fibroz",
+  "Effusion": "Plevral efuziya",
+  "Pneumonia": "Pnevmoniya",
+  "Pleural_Thickening": "Plevra qalinlashishi",
+  "Cardiomegaly": "Kardiomegaliya",
+  "Nodule": "O'pka tugunlari",
+  "Mass": "Hajmli hosila",
+  "Hernia": "Churra",
+  "Lung Lesion": "O'pka zararlanishi",
+  "Fracture": "Qovurg'a sinishi",
+  "Lung Opacity": "O'pka xiralashishi",
+  "Enlarged Cardiomediastinum": "Kengaygan kardiomediastinum"
+};
+
+const getUzName = (name) => diseaseUzMap[name] || name;
+
 export default function ResultView({ patient, onApproveSuccess }) {
   const [opacity, setOpacity] = useState(80);
   const [heatmapVisible, setHeatmapVisible] = useState(true);
@@ -143,6 +166,7 @@ export default function ResultView({ patient, onApproveSuccess }) {
     : 'bg-error/10 border-error/30 text-error';
 
   const rawScores = patient.raw_scores || [];
+  const selectedDiseaseUz = getUzName(selectedDisease);
 
   return (
     <div className="flex-1 flex flex-col gap-6">
@@ -213,7 +237,7 @@ export default function ResultView({ patient, onApproveSuccess }) {
               <div className="absolute inset-0 bg-black/60 z-30 flex items-center justify-center backdrop-blur-xs">
                 <div className="flex items-center gap-2 bg-surface px-4 py-2 rounded-full shadow-lg">
                   <span className="w-4 h-4 rounded-full border-2 border-primary border-t-transparent animate-spin"></span>
-                  <span className="text-xs font-bold text-on-surface">Grad-CAM {selectedDisease} hisoblanmoqda...</span>
+                  <span className="text-xs font-bold text-on-surface">Grad-CAM {selectedDiseaseUz} hisoblanmoqda...</span>
                 </div>
               </div>
             )}
@@ -232,7 +256,7 @@ export default function ResultView({ patient, onApproveSuccess }) {
                   {heatmapVisible ? 'visibility' : 'visibility_off'}
                 </span>
                 <span>
-                  {heatmapVisible ? `Grad-CAM (${selectedDisease}) Yashirish` : `Grad-CAM (${selectedDisease}) Ko'rsatish`}
+                  {heatmapVisible ? `Grad-CAM (${selectedDiseaseUz}) Yashirish` : `Grad-CAM (${selectedDiseaseUz}) Ko'rsatish`}
                 </span>
               </button>
               
@@ -253,7 +277,7 @@ export default function ResultView({ patient, onApproveSuccess }) {
             {/* Gradient Legends */}
             <div className="absolute top-6 right-6 z-30 bg-surface/90 backdrop-blur-md rounded-xl p-3 shadow-lg border border-outline-variant/30">
               <div className="flex flex-col gap-1.5">
-                <span className="text-[9px] uppercase font-bold text-on-surface-variant tracking-wider">AI Faollashuv ({selectedDisease})</span>
+                <span className="text-[9px] uppercase font-bold text-on-surface-variant tracking-wider">AI Faollashuv ({selectedDiseaseUz})</span>
                 <div className="w-28 h-2.5 bg-gradient-to-r from-blue-600 via-green-400 to-red-600 rounded-full"></div>
                 <div className="flex justify-between text-[9px] font-bold text-on-surface">
                   <span>Past</span>
@@ -311,12 +335,12 @@ export default function ResultView({ patient, onApproveSuccess }) {
               </div>
             </div>
 
-            {/* TAB CONTENT: Raw Scores Interactive Selector */}
             {activeSegmentTab === 'raw_scores' && (
               <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-3">
                 {rawScores.map((item, idx) => {
-                  const isSelected = selectedDisease === item.disease;
+                  const isSelected = selectedDisease === item.disease || selectedDisease === item.disease_uz;
                   const pct = Math.min(Math.max(roundScore(item.score), 0), 100);
+                  const nameUz = item.disease_uz || getUzName(item.disease);
                   return (
                     <button
                       key={idx}
@@ -328,7 +352,10 @@ export default function ResultView({ patient, onApproveSuccess }) {
                       }`}
                     >
                       <div className="flex justify-between items-center w-full">
-                        <span className="text-xs font-bold truncate">{item.disease}</span>
+                        <div className="flex flex-col truncate pr-2">
+                          <span className="text-xs font-bold truncate">{nameUz}</span>
+                          <span className="text-[10px] text-on-surface-variant/70 font-medium truncate">{item.disease}</span>
+                        </div>
                         <span className="text-xs font-mono font-semibold">{item.score.toFixed(3)}</span>
                       </div>
                       <div className="w-full bg-outline-variant/30 h-1.5 rounded-full overflow-hidden">

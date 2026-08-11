@@ -6,6 +6,7 @@ import torch
 import torch.nn.functional as F
 import torchxrayvision as xrv
 
+from backend.config import get_pathology_en, get_pathology_uz
 from backend.model_service import get_model, get_device
 from backend.preprocessing import preprocess_image
 from backend.utils import encode_array_to_png
@@ -59,11 +60,13 @@ def generate_gradcam(
                 disease = model.pathologies[target_index]
                 logger.info(f"Auto-selected highest-scoring pathology '{disease}' for Grad-CAM.")
             else:
-                if disease not in model.pathologies:
+                disease_resolved = get_pathology_en(disease)
+                if disease_resolved not in model.pathologies:
                     raise ValueError(
                         f"Invalid pathology name '{disease}'. "
                         f"Available pathologies: {model.pathologies}"
                     )
+                disease = disease_resolved
                 target_index = model.pathologies.index(disease)
 
             target_score = output[0, target_index]

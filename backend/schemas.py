@@ -8,6 +8,11 @@ class PathologyScore(BaseModel):
         description="Pathology/disease name as defined by TorchXRayVision",
         example="Pneumonia"
     )
+    disease_uz: str = Field(
+        ...,
+        description="Pathology/disease name in Uzbek language",
+        example="Pnevmoniya"
+    )
     score: float = Field(
         ...,
         description="Raw model output score (unthresholded)",

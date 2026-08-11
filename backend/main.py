@@ -20,7 +20,7 @@ from fastapi.middleware.cors import CORSMiddleware
 from pydantic import BaseModel
 from PIL import Image, ImageDraw, ImageFilter
 
-from backend.config import MODEL_NAME, MAX_IMAGE_SIZE_BYTES
+from backend.config import MODEL_NAME, MAX_IMAGE_SIZE_BYTES, get_pathology_uz, get_pathology_en
 from backend.model_service import load_model, get_model, get_device
 from backend.preprocessing import preprocess_image
 from backend.inference import run_inference
@@ -236,11 +236,11 @@ INITIAL_PATIENTS = [
         "approved_by": None,
         "approved_time": None,
         "raw_scores": [
-            {"disease": "Pneumonia", "score": 0.89},
-            {"disease": "Atelectasis", "score": 0.45},
-            {"disease": "Effusion", "score": 0.32},
-            {"disease": "Lung Opacity", "score": 0.78},
-            {"disease": "Infiltration", "score": 0.21}
+            {"disease": "Pneumonia", "disease_uz": "Pnevmoniya", "score": 0.89},
+            {"disease": "Atelectasis", "disease_uz": "Atelektaz", "score": 0.45},
+            {"disease": "Effusion", "disease_uz": "Plevral efuziya", "score": 0.32},
+            {"disease": "Lung Opacity", "disease_uz": "O'pka xiralashishi", "score": 0.78},
+            {"disease": "Infiltration", "disease_uz": "Infiltratsiya", "score": 0.21}
         ],
         "findings": {
             "summary": "O'pkaning chap tomonida pnevmoniya (Pneumonia) alomatlari aniqlandi.",
@@ -259,7 +259,7 @@ INITIAL_PATIENTS = [
         "age": 45,
         "gender": "Erkak",
         "upload_time": "bugun, 10:45",
-        "diagnosis": "Infiltration",
+        "diagnosis": "Infiltratsiya",
         "probability": 94.0,
         "original_image": "/static/samples/sample_tb.png",
         "heatmap_image": "/static/samples/heatmap_tb.png",
@@ -267,9 +267,9 @@ INITIAL_PATIENTS = [
         "approved_by": "Dr. A. Karimov",
         "approved_time": "Bugun, 14:32",
         "raw_scores": [
-            {"disease": "Infiltration", "score": 0.94},
-            {"disease": "Consolidation", "score": 0.62},
-            {"disease": "Pleural_Thickening", "score": 0.58}
+            {"disease": "Infiltration", "disease_uz": "Infiltratsiya", "score": 0.94},
+            {"disease": "Consolidation", "disease_uz": "Konsolidatsiya", "score": 0.62},
+            {"disease": "Pleural_Thickening", "disease_uz": "Plevra qalinlashishi", "score": 0.58}
         ],
         "findings": {
             "summary": "O'pkaning o'ng tepa qismida infiltrativ o'choqlar aniqlandi.",
@@ -356,7 +356,8 @@ async def upload_xray(file: UploadFile = File(...)):
         raise HTTPException(status_code=500, detail="Model tahlilida xatolik yuz berdi.")
 
     top_pred = max(raw_predictions, key=lambda p: p["score"])
-    top_disease = top_pred["disease"]
+    top_disease_eng = top_pred["disease"]
+    top_disease_uz = top_pred.get("disease_uz", get_pathology_uz(top_disease_eng))
     top_score = top_pred["score"]
     prob_percentage = round(float(top_score) * 100, 1)
 
@@ -364,7 +365,7 @@ async def upload_xray(file: UploadFile = File(...)):
     heatmap_filename = f"{file_id}_heatmap.png"
     heatmap_dest_path = os.path.join(UPLOAD_DIR, heatmap_filename)
     try:
-        gradcam_bytes, _ = generate_gradcam(image_bytes, disease=top_disease)
+        gradcam_bytes, _ = generate_gradcam(image_bytes, disease=top_disease_eng)
         with open(heatmap_dest_path, "wb") as h_buffer:
             h_buffer.write(gradcam_bytes)
     except Exception as e:
@@ -374,14 +375,14 @@ async def upload_xray(file: UploadFile = File(...)):
 
     pid = f"MX-{uuid.uuid4().hex[:4].upper()}"
 
-    summary_text = f"TorchXRayVision DenseNet-121 tahliliga ko'ra asosiy patologiya: {top_disease} (raw score: {top_score:.3f})."
-    simple_text = f"Sun'iy intellekt rentgen tasvirida {top_disease} xususiyatlarini aniqladi. O'z vaqtida shifokor ko'rigidan o'tish tavsiya etiladi."
+    summary_text = f"TorchXRayVision DenseNet-121 tahliliga ko'ra asosiy patologiya: {top_disease_uz} ({top_disease_eng}, raw score: {top_score:.3f})."
+    simple_text = f"Sun'iy intellekt rentgen tasvirida {top_disease_uz} xususiyatlarini aniqladi. O'z vaqtida shifokor ko'rigidan o'tish tavsiya etiladi."
     precautions = [
         "Shifokor-rentgenolog ko'rigiga murojaat qiling.",
         "Qon va balg'am laboratoriya tahlillarini topshiring.",
         "Nafas olish holatini va tana haroratini kuzatib boring."
     ]
-    technical_text = f"DenseNet-121 (res224-all) pretrained model orqali 18 ta patologiya baholandi. Barcha raw model score'lari: " + ", ".join([f"{p['disease']}: {p['score']:.3f}" for p in raw_predictions[:5]])
+    technical_text = f"DenseNet-121 (res224-all) pretrained model orqali 18 ta patologiya baholandi. Barcha raw model score'lari: " + ", ".join([f"{p.get('disease_uz', p['disease'])} ({p['disease']}): {p['score']:.3f}" for p in raw_predictions[:5]])
 
     findings = {
         "summary": summary_text,
@@ -396,7 +397,8 @@ async def upload_xray(file: UploadFile = File(...)):
         "age": 40,
         "gender": "Erkak",
         "upload_time": "Zudlik bilan",
-        "diagnosis": top_disease,
+        "diagnosis": top_disease_uz,
+        "diagnosis_eng": top_disease_eng,
         "probability": prob_percentage,
         "original_image": f"/uploads/{image_filename}",
         "heatmap_image": f"/uploads/{heatmap_filename}",
