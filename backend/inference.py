@@ -1,0 +1,54 @@
+from typing import List, Dict, Any
+import torch
+import torchxrayvision as xrv
+
+from backend.config import MODEL_NAME
+from backend.model_service import get_model, get_device
+from backend.preprocessing import preprocess_image
+
+
+def run_inference(
+    image_bytes: bytes,
+    model: xrv.models.DenseNet = None,
+    device: torch.device = None
+) -> Dict[str, Any]:
+    """
+    Run TorchXRayVision DenseNet-121 inference on raw chest X-ray image bytes.
+
+    Returns raw pathology scores without applying thresholds or classification labels.
+
+    Args:
+        image_bytes (bytes): Uploaded chest X-ray file bytes.
+        model (xrv.models.DenseNet, optional): Model instance (defaults to loaded singleton).
+        device (torch.device, optional): Target device (defaults to loaded singleton device).
+
+    Returns:
+        Dict[str, Any]: Structured dictionary with 'model' name and 'predictions' list.
+    """
+    if model is None:
+        model = get_model()
+    if device is None:
+        device = get_device()
+
+    # Preprocess image into float tensor (1, 1, 224, 224)
+    tensor, _ = preprocess_image(image_bytes, device=device)
+
+    # Perform inference with gradients disabled
+    with torch.no_grad():
+        outputs = model(tensor)
+
+    # Extract 1D predictions tensor (18 scores)
+    scores = outputs[0].detach().cpu().numpy()
+
+    # Map raw scores dynamically to model.pathologies
+    predictions: List[Dict[str, Any]] = []
+    for pathology_name, score_val in zip(model.pathologies, scores):
+        predictions.append({
+            "disease": str(pathology_name),
+            "score": float(score_val)
+        })
+
+    return {
+        "model": MODEL_NAME,
+        "predictions": predictions
+    }
