@@ -59,15 +59,15 @@ pip install -r requirements.txt
 
 ### Step 3: Run Service Options
 
-**Option A: Integrated AvicennaX Medical Web UI & AI Server (Full-Stack)**
+**Option A: Integrated Chest X-ray AI Medical Web UI & Server (Full-Stack)**
 
 Run the integrated server with the React frontend and PyTorch DenseNet-121 backend:
 
 ```bash
-python -m uvicorn avicennaX.app.main:app --reload
+python main.py
 ```
 
-Access the AvicennaX web dashboard at `http://localhost:8000`.
+Access the Chest X-ray AI web dashboard at `http://localhost:8000`.
 
 **Option B: Standalone API Server Only**
 
@@ -79,10 +79,10 @@ uvicorn backend.main:app --reload
 
 ---
 
-## 4. AvicennaX Frontend Integration
+## 4. Chest X-ray AI Frontend Integration
 
-The backend is fully integrated into the **AvicennaX** clinical web application (`avicennaX/`):
-* **Real AI Inference**: Uploading a Chest X-ray in the AvicennaX UI executes real TorchXRayVision DenseNet-121 inference across all 18 pathologies.
+The backend is fully integrated into the **Chest X-ray AI** clinical web application (`frontend/`):
+* **Real AI Inference**: Uploading a Chest X-ray in the Chest X-ray AI UI executes real TorchXRayVision DenseNet-121 inference across all 18 pathologies.
 * **18 Pathology Score Grid**: Displays raw model scores for all 18 pathologies in an interactive selector (`ResultView.jsx`).
 * **Dynamic Grad-CAM Visualizer**: Clicking any pathology dynamically re-generates and renders the real Grad-CAM visual heatmap overlay for that specific disease in real time.
 
