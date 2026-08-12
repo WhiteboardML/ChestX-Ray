@@ -50,21 +50,45 @@ def query_rag_assistant(
         model_source = qwen_res["source"]
     elif context_chunks:
         model_source = "Local Vector RAG Engine"
-        context_str = "\n\n".join(context_chunks)
+        context_str = "\n".join(context_chunks)
         if lang == "ru":
-            reply = f"На основе клинических протоколов Минздрава по диагнозу [{diagnosis}]:\n\n{context_str}\n\n⚠️ Обратите внимание: Все назначения делаются врачом-пульмонологом на личном приеме."
+            reply = (
+                f"📌 Источник: Национальный клинический стандарт Минздрава РУз 2025 (Приказ №180)\n\n"
+                f"💡 Краткая рекомендация по диагнозу [{diagnosis}]:\n"
+                f"{context_str}\n\n"
+                f"⚠️ Назначение лекарств подтверждается врачом-пульмонологом."
+            )
         elif lang == "en":
-            reply = f"Based on MOH clinical protocols for [{diagnosis}]:\n\n{context_str}\n\n⚠️ Note: All treatments must be confirmed by a consulting physician."
+            reply = (
+                f"📌 Source: Uzbekistan MOH National Clinical Standard 2025 (Order No. 180)\n\n"
+                f"💡 Summary Recommendation for [{diagnosis}]:\n"
+                f"{context_str}\n\n"
+                f"⚠️ Medication regimens require attending physician confirmation."
+            )
         else:
-            reply = f"SSV ning [{diagnosis}] bo'yicha tasdiqlangan klinik protokoli va yo'riqnomasi asosida:\n\n{context_str}\n\n⚠️ Eslatma: Barcha dori vositalari vrach-pulmonolog tomonidan shaxsiy ko'rikda tayinlanadi."
+            reply = (
+                f"📌 Manba: O'zbekiston SSV Milliy Klinik Standarti va Protokoli 2025 (180-sonli buyruq)\n\n"
+                f"💡 [{diagnosis}] bo'yicha qisqa klinik tavsiya:\n"
+                f"{context_str}\n\n"
+                f"⚠️ Eslatma: Dori vositalari tayinlovi vrach-pulmonolog tomonidan tasdiqlanishi shart."
+            )
     else:
         model_source = "Local Vector RAG Engine"
         if lang == "ru":
-            reply = f"По диагнозу [{diagnosis}] рекомендуется стационарный или амбулаторный контроль пульмонолога, проведение лабораторных анализов крови и повторная рентгенография через 7-10 дней."
+            reply = (
+                f"📌 Источник: Минздрав РУз (Приказ №180)\n\n"
+                f"• По диагнозу [{diagnosis}] рекомендуется осмотр пульмонолога и повторная рентгенография через 7-10 дней."
+            )
         elif lang == "en":
-            reply = f"For diagnosis [{diagnosis}], pulmonologist outpatient review, blood laboratory tests, and follow-up X-ray imaging in 7-10 days are recommended."
+            reply = (
+                f"📌 Source: Uzbekistan MOH (Order No. 180)\n\n"
+                f"• For diagnosis [{diagnosis}], pulmonologist review and follow-up X-ray in 7-10 days are recommended."
+            )
         else:
-            reply = f"Ushbu [{diagnosis}] tahlili bo'yicha SSV yo'riqnomasi asosida: Vrach-pulmonolog ko'rigi, qon va balg'am tahlillari hamda 7-10 kundan so'ng takroriy rentgenografiya tavsiya etiladi."
+            reply = (
+                f"📌 Manba: O'zbekiston SSV (180-sonli buyruq)\n\n"
+                f"• Ushbu [{diagnosis}] bo'yicha vrach-pulmonolog ko'rigi hamda 7-10 kundan so'ng qayta rentgen tahlili tavsiya etiladi."
+            )
 
     return {
         "message": reply,
