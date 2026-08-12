@@ -373,7 +373,7 @@ export default function DashboardView({ onUploadSuccess }) {
                 </div>
                 <h2 className="font-geist text-2xl font-bold text-on-surface mb-3">O'pka rentgen suratini bu yerga tashlang</h2>
                 <p className="text-sm text-on-surface-variant mb-8 leading-relaxed">
-                  yoki kompyuter o'zidan tanlang. PNG, JPG yoki yuqori aniqlikdagi DICOM formatlari qo'llab-quvvatlanadi.
+                  yoki kompyuter o'zidan tanlang. PNG, JPG, DICOM (.dcm) va PDF (.pdf) formatlari qo'llab-quvvatlanadi.
                 </p>
 
                 <button
@@ -388,7 +388,7 @@ export default function DashboardView({ onUploadSuccess }) {
                 </button>
                 <input
                   ref={fileInputRef}
-                  accept=".png,.jpg,.jpeg,.dcm"
+                  accept=".png,.jpg,.jpeg,.dcm,.dicom,.pdf,.webp"
                   className="hidden"
                   id="file-input"
                   type="file"

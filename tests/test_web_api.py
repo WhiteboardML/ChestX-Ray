@@ -87,3 +87,24 @@ def test_patient_search_and_multiscan_upload(client):
     assert p_data["id"] == "MX-8924"
     assert len(p_data["scans"]) >= 3
 
+
+def test_dicom_and_pdf_upload_support(client):
+    """Test POST /api/upload with .dcm and .pdf file extensions."""
+    import pypdfium2 as pdfium
+    from PIL import Image
+    import io
+
+    # Create dummy PDF bytes
+    pdf = pdfium.PdfDocument.new()
+    page = pdf.new_page(width=300, height=300)
+    pdf_bytes = io.BytesIO()
+    pdf.save(pdf_bytes)
+
+    files = {"file": ("xray_report.pdf", pdf_bytes.getvalue(), "application/pdf")}
+    res_pdf = client.post("/api/upload", files=files)
+    assert res_pdf.status_code == 200
+    p_pdf = res_pdf.json()
+    assert "id" in p_pdf
+    assert p_pdf["original_image"].endswith(".png")
+
+

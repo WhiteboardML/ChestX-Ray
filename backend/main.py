@@ -1,5 +1,6 @@
 import os
 import sys
+import io
 
 BASE_DIR = os.path.dirname(os.path.abspath(__file__))
 PROJECT_ROOT = os.path.dirname(BASE_DIR)
@@ -25,6 +26,7 @@ from backend.model_service import load_model, get_model, get_device
 from backend.preprocessing import preprocess_image
 from backend.inference import run_inference
 from backend.cam_service import generate_gradcam
+from backend.utils import validate_and_load_image
 from backend.schemas import HealthResponse, PredictResponse, AnalyzeResponse, ErrorResponse
 
 # Configure logging
@@ -421,27 +423,32 @@ async def upload_xray(
     Attaches scan to existing patient profile if existing_patient_id is provided.
     """
     filename_lower = file.filename.lower()
-    if not (filename_lower.endswith('.png') or filename_lower.endswith('.jpg') or
-            filename_lower.endswith('.jpeg') or filename_lower.endswith('.dcm')):
+    allowed_exts = ('.png', '.jpg', '.jpeg', '.dcm', '.dicom', '.pdf', '.webp', '.bmp', '.tif', '.tiff')
+    if not any(filename_lower.endswith(ext) for ext in allowed_exts):
         raise HTTPException(
             status_code=400,
-            detail="Qo'llab-quvvatlanmaydigan fayl formati. Faqat rentgen rasmlari (PNG, JPG, DICOM) qabul qilinadi."
+            detail="Qo'llab-quvvatlanmaydigan fayl formati. Faqat PNG, JPG, DICOM (.dcm) va PDF (.pdf) qabul qilinadi."
         )
 
     file_id = str(uuid.uuid4())
-    safe_ext = os.path.splitext(filename_lower)[1] or ".png"
-    if safe_ext == ".dcm":
-        safe_ext = ".png"
-
-    image_filename = f"{file_id}{safe_ext}"
+    image_filename = f"{file_id}.png"
     image_dest_path = os.path.join(UPLOAD_DIR, image_filename)
 
     image_bytes = await file.read()
     if not image_bytes:
         raise HTTPException(status_code=400, detail="Yuklangan fayl bo'sh.")
 
+    # Validate and render web-compatible PNG image for UI display
+    try:
+        _, pil_img = validate_and_load_image(image_bytes)
+        buf = io.BytesIO()
+        pil_img.save(buf, format="PNG")
+        web_png_bytes = buf.getvalue()
+    except ValueError as ve:
+        raise HTTPException(status_code=400, detail=str(ve)) from ve
+
     with open(image_dest_path, "wb") as buffer:
-        buffer.write(image_bytes)
+        buffer.write(web_png_bytes)
 
     # Real TorchXRayVision DenseNet-121 Inference
     try:
