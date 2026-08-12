@@ -953,9 +953,24 @@ async def generate_pdf_report(patient_id: str, db: Session = Depends(get_db)):
         raise HTTPException(status_code=404, detail="Bemor topilmadi")
     patient = patient_obj.to_dict()
 
+    # Filter feasible scores (>= 0.05 or primary diagnosis)
+    raw_scores = patient.get('raw_scores', [])
+    feasible_scores = [
+        p for p in raw_scores
+        if p.get('score', 0) >= 0.05 or p.get('disease') == patient.get('diagnosis') or p.get('disease_uz') == patient.get('diagnosis')
+    ]
+    # Fallback to top 3 scores if no score meets 0.05 threshold
+    if not feasible_scores:
+        feasible_scores = sorted(raw_scores, key=lambda x: x.get('score', 0), reverse=True)[:3]
+    else:
+        feasible_scores = sorted(feasible_scores, key=lambda x: x.get('score', 0), reverse=True)
+
     raw_scores_rows = "".join([
-        f"<tr><td>{p['disease']}</td><td>{p['score']:.4f}</td></tr>"
-        for p in patient.get('raw_scores', [])
+        f"<tr>"
+        f"<td><strong>{p.get('disease_uz', p['disease'])}</strong> <span style='color:#64748b; font-size:11px;'>({p['disease']})</span></td>"
+        f"<td>{p['score']:.4f} ({p['score']*100:.1f}%)</td>"
+        f"</tr>"
+        for p in feasible_scores
     ])
 
     html_content = f"""<!DOCTYPE html>
@@ -1002,12 +1017,12 @@ async def generate_pdf_report(patient_id: str, db: Session = Depends(get_db)):
     </div>
 
     <div class="section">
-        <div class="section-title">Patologiyalar bo'yicha Raw Score'lar</div>
+        <div class="section-title">Asosiy Ehtimoliy Patologiyalar (Feasible Findings)</div>
         <table>
             <thead>
                 <tr>
-                    <th>Patologiya Nomi</th>
-                    <th>Ehtimollik Score (Raw)</th>
+                    <th>Patologiya Nomi (Kasallik)</th>
+                    <th>Tibbiy Ehtimollik (Score / %)</th>
                 </tr>
             </thead>
             <tbody>
