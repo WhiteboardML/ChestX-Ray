@@ -3,7 +3,11 @@ import cv2
 import numpy as np
 from PIL import Image, UnidentifiedImageError
 import pydicom
-import pypdfium2 as pdfium
+
+try:
+    import pypdfium2 as pdfium
+except ImportError:
+    pdfium = None
 
 
 def validate_and_load_image(image_bytes: bytes) -> tuple[np.ndarray, Image.Image]:
@@ -38,6 +42,8 @@ def validate_and_load_image(image_bytes: bytes) -> tuple[np.ndarray, Image.Image
 
     # 2. Try PDF (.pdf) rendering
     if image_bytes.startswith(b'%PDF'):
+        if pdfium is None:
+            raise ValueError("PDF faylini o'qish uchun 'pypdfium2' kutubxonasi o'rnatilishi shart. (pip install pypdfium2)")
         try:
             pdf = pdfium.PdfDocument(image_bytes)
             if len(pdf) == 0:
