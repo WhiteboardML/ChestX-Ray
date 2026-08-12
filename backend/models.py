@@ -105,6 +105,8 @@ class Scan(Base):
             "status": self.status,
             "approved_by": self.approved_by,
             "approved_time": self.approved_time,
+            "raw_scores": self.raw_scores,
+            "findings": self.findings
         }
 
 

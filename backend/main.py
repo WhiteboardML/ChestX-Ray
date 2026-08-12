@@ -459,18 +459,14 @@ async def upload_xray(
     Requires active subscription or available tokens.
     Runs TorchXRayVision DenseNet-121 inference & Grad-CAM heatmap generation.
     """
-    # Verify User Subscription / Paid Access
+    # Verify User Subscription / Paid Access (Always Unlimited)
     if user_email:
         user = db.query(User).filter(User.email == user_email.lower().strip()).first()
         if user:
-            if not user.is_subscribed and user.scan_tokens <= 0:
-                raise HTTPException(
-                    status_code=402,
-                    detail="Rentgen tahlilidan foydalanish uchun to'lov qilinmagan. Iltimos, Tariflar bo'limidan obuna yoki token xarid qiling."
-                )
-            if user.scan_tokens > 0 and user.plan_name.startswith("Token"):
-                user.scan_tokens -= 1
-                db.commit()
+            user.is_subscribed = 1
+            user.plan_name = "SaaS Obunasi (Cheksiz)"
+            user.scan_tokens = 99999
+            db.commit()
     filename_lower = file.filename.lower()
     allowed_exts = ('.png', '.jpg', '.jpeg', '.dcm', '.dicom', '.pdf', '.webp', '.bmp', '.tif', '.tiff')
     if not any(filename_lower.endswith(ext) for ext in allowed_exts):
