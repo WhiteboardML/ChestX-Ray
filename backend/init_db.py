@@ -1,7 +1,9 @@
 """
 Database initialization and seed data populator for SQLite.
+Auto-creates tables, seed patients, and default Admin credentials upon first launch.
 """
 import logging
+import datetime
 from sqlalchemy.orm import Session
 from backend.database import engine, Base, SessionLocal
 from backend.models import Patient, Scan, User
@@ -10,10 +12,39 @@ logger = logging.getLogger("chest_xray_backend")
 
 
 def init_db():
-    """Create all tables if database is empty."""
+    """Create all tables and seed initial admin & patient data if database is empty."""
     Base.metadata.create_all(bind=engine)
     logger.info("Database tables initialized cleanly.")
 
+    db = SessionLocal()
+    try:
+        # Seed default Admin Doctor user if not present
+        admin_user = db.query(User).filter(User.email == "admin@avicennaai.uz").first()
+        if not admin_user:
+            admin_user = User(
+                id="USR-ADMIN-001",
+                email="admin@avicennaai.uz",
+                username="Bosh Shifokor (Admin)",
+                password_hash="AvicennaAI2026!",
+                role="Admin",
+                is_subscribed=1,
+                plan_name="SaaS Obunasi (Cheksiz)",
+                scan_tokens=99999,
+                card_number=None,
+                created_at=datetime.datetime.now().strftime("%Y-%m-%d")
+            )
+            db.add(admin_user)
+            db.commit()
+            logger.info("Created default Admin account: admin@avicennaai.uz / AvicennaAI2026!")
+
+        # Seed initial sample patients if table empty
+        if db.query(Patient).count() == 0:
+            seed_initial_data(db)
+            logger.info("Seeded initial clinical sample patients.")
+    except Exception as e:
+        logger.error(f"Error during init_db seed: {e}")
+    finally:
+        db.close()
 
 
 def seed_initial_data(db: Session):
