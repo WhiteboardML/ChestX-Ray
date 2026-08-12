@@ -4,7 +4,7 @@ Database initialization and seed data populator for SQLite.
 import logging
 from sqlalchemy.orm import Session
 from backend.database import engine, Base, SessionLocal
-from backend.models import Patient, Scan
+from backend.models import Patient, Scan, User
 
 logger = logging.getLogger("chest_xray_backend")
 

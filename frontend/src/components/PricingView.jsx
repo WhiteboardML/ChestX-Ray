@@ -1,14 +1,14 @@
 import React, { useState } from 'react';
 import { translations } from '../i18n';
 
-export default function PricingView({ lang = 'uz' }) {
+export default function PricingView({ currentUser, setCurrentUser, lang = 'uz' }) {
   const t = translations[lang] || translations.uz;
   const [selectedPlan, setSelectedPlan] = useState('saas'); // 'token' | 'saas' | 'university'
   const [showCheckoutModal, setShowCheckoutModal] = useState(false);
   const [activeSub, setActiveSub] = useState({
-    planName: "SaaS Obunasi",
-    status: "Faol (Active)",
-    scansLeft: "Cheksiz (Unlimited)",
+    planName: currentUser?.plan_name || "SaaS Obunasi",
+    status: currentUser?.is_subscribed ? "Faol (Active)" : "To'lanmagan",
+    scansLeft: currentUser?.is_subscribed ? "Cheksiz (Unlimited)" : "0 Token",
     expiresAt: "2026-09-12"
   });
   const [paymentMethod, setPaymentMethod] = useState('click');
@@ -16,42 +16,48 @@ export default function PricingView({ lang = 'uz' }) {
   const [isProcessing, setIsProcessing] = useState(false);
   const [paymentSuccess, setPaymentSuccess] = useState(false);
 
+  const RECEIVING_CARD = "4916 9903 3783 3237";
+
   const handleSelectPlan = (planId) => {
     setSelectedPlan(planId);
     setShowCheckoutModal(true);
     setPaymentSuccess(false);
   };
 
-  const handlePayment = (e) => {
+  const handlePayment = async (e) => {
     e.preventDefault();
     setIsProcessing(true);
 
-    setTimeout(() => {
+    try {
+      const res = await fetch('/api/auth/subscribe', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          email: currentUser?.email || "dr.karimov@clinic.uz",
+          plan_type: selectedPlan,
+          card_number: RECEIVING_CARD
+        })
+      });
+
       setIsProcessing(false);
-      setPaymentSuccess(true);
-      if (selectedPlan === 'saas') {
+
+      if (res.ok) {
+        const updatedUser = await res.json();
+        if (setCurrentUser) setCurrentUser(updatedUser);
+        setPaymentSuccess(true);
         setActiveSub({
-          planName: "SaaS Obunasi (Eng ommabop)",
-          status: "Faol (Active)",
-          scansLeft: "Cheksiz (Unlimited)",
-          expiresAt: "2026-09-12"
-        });
-      } else if (selectedPlan === 'token') {
-        setActiveSub({
-          planName: "Token-based to'lov",
-          status: "Faol (Active)",
-          scansLeft: "100 Ta Token",
+          planName: updatedUser.plan_name,
+          status: "Faol (Active) ✅",
+          scansLeft: updatedUser.plan_name.includes("SaaS") ? "Cheksiz (Unlimited)" : `${updatedUser.scan_tokens} Token`,
           expiresAt: "2026-09-12"
         });
       } else {
-        setActiveSub({
-          planName: "Universitet / Tadqiqot Litsenziyasi",
-          status: "Faol (Active)",
-          scansLeft: "500 Ta Token (50% Chegirma)",
-          expiresAt: "2027-08-12"
-        });
+        alert("To'lovni amalga oshirishda xatolik yuz berdi.");
       }
-    }, 1200);
+    } catch (err) {
+      setIsProcessing(false);
+      alert("Server bilan aloqada xatolik.");
+    }
   };
 
   return (
@@ -351,6 +357,18 @@ export default function PricingView({ lang = 'uz' }) {
                   <span className="text-base font-bold text-primary font-geist">
                     {selectedPlan === 'saas' ? '1.000.000 UZS/oy' : selectedPlan === 'token' ? '2.000 UZS/scan' : '1.000 UZS/scan'}
                   </span>
+                </div>
+
+                {/* Receiver Card Info Banner */}
+                <div className="p-3 bg-primary/10 border border-primary/20 rounded-2xl flex items-center justify-between">
+                  <div className="flex items-center gap-2.5">
+                    <span className="material-symbols-outlined text-primary text-[20px]">credit_card</span>
+                    <div className="flex flex-col">
+                      <span className="text-[10px] uppercase font-bold text-primary tracking-wider">Mablag' o'tkaziladigan rasmiy karta:</span>
+                      <span className="text-sm font-extrabold text-on-surface tracking-wider font-geist">{RECEIVING_CARD}</span>
+                    </div>
+                  </div>
+                  <span className="text-[10px] font-bold px-2 py-0.5 rounded bg-primary text-white">Rasmiy</span>
                 </div>
 
                 {/* Payment Provider Selection */}

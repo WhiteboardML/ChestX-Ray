@@ -1,7 +1,7 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { translations } from '../i18n';
 
-export default function DashboardView({ onUploadSuccess, lang = 'uz' }) {
+export default function DashboardView({ onUploadSuccess, currentUser, lang = 'uz' }) {
   const t = translations[lang] || translations.uz;
   const [isDragging, setIsDragging] = useState(false);
   const [isUploading, setIsUploading] = useState(false);
@@ -110,6 +110,9 @@ export default function DashboardView({ onUploadSuccess, lang = 'uz' }) {
 
     const formData = new FormData();
     formData.append('file', pendingFile);
+    if (currentUser?.email) {
+      formData.append('user_email', currentUser.email);
+    }
     if (selectedPatientId) {
       formData.append('existing_patient_id', selectedPatientId);
     } else {

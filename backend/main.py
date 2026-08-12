@@ -392,6 +392,20 @@ class DisapproveRequest(BaseModel):
     correct_diagnosis: str
     rejection_reason: Optional[str] = None
 
+class RegisterRequest(BaseModel):
+    email: str
+    username: str
+    password: str
+
+class LoginRequest(BaseModel):
+    email: str
+    password: str
+
+class SubscribeRequest(BaseModel):
+    email: str
+    plan_type: str  # 'saas' | 'token' | 'university'
+    card_number: Optional[str] = "4916 9903 3783 3237"
+
 
 @app.get("/api/patients/search")
 async def search_patients(q: str = "", db: Session = Depends(get_db)):
@@ -437,13 +451,26 @@ async def upload_xray(
     age: Optional[int] = Form(None),
     gender: Optional[str] = Form(None),
     existing_patient_id: Optional[str] = Form(None),
+    user_email: Optional[str] = Form(None),
     db: Session = Depends(get_db)
 ):
     """
     Upload X-ray image from Web UI.
-    Runs TorchXRayVision DenseNet-121 inference & Grad-CAM heatmap generation!
-    Saves scan and patient records into SQLite database via SQLAlchemy.
+    Requires active subscription or available tokens (Receiving Card: 4916 9903 3783 3237).
+    Runs TorchXRayVision DenseNet-121 inference & Grad-CAM heatmap generation.
     """
+    # Verify User Subscription / Paid Access
+    if user_email:
+        user = db.query(User).filter(User.email == user_email.lower().strip()).first()
+        if user:
+            if not user.is_subscribed and user.scan_tokens <= 0:
+                raise HTTPException(
+                    status_code=402,
+                    detail="Rentgen tahlilidan foydalanish uchun to'lov qilinmagan. Iltimos, Tariflar bo'limidan obuna yoki token xarid qiling. Qabul qiluvchi karta: 4916 9903 3783 3237"
+                )
+            if user.scan_tokens > 0 and user.plan_name.startswith("Token"):
+                user.scan_tokens -= 1
+                db.commit()
     filename_lower = file.filename.lower()
     allowed_exts = ('.png', '.jpg', '.jpeg', '.dcm', '.dicom', '.pdf', '.webp', '.bmp', '.tif', '.tiff')
     if not any(filename_lower.endswith(ext) for ext in allowed_exts):
@@ -754,6 +781,107 @@ async def disapprove_report(patient_id: str, req: DisapproveRequest, db: Session
     db.commit()
     db.refresh(patient)
     return patient.to_dict()
+
+
+RECEIVING_CARD_NUMBER = "4916 9903 3783 3237"
+
+
+@app.post("/api/auth/register")
+async def register_user(req: RegisterRequest, db: Session = Depends(get_db)):
+    existing = db.query(User).filter(User.email == req.email.lower().strip()).first()
+    if existing:
+        raise HTTPException(status_code=400, detail="Ushbu email bilan foydalanuvchi allaqachon mavjud.")
+
+    user_id = f"USR-{uuid.uuid4().hex[:6].upper()}"
+    new_user = User(
+        id=user_id,
+        email=req.email.lower().strip(),
+        username=req.username.strip(),
+        password_hash=req.password,
+        role="Doctor",
+        is_subscribed=0,  # Unpaid until plan purchased
+        plan_name="None",
+        scan_tokens=0,
+        card_number=RECEIVING_CARD_NUMBER,
+        created_at=datetime.datetime.now().strftime("%Y-%m-%d")
+    )
+    db.add(new_user)
+    db.commit()
+    db.refresh(new_user)
+    return new_user.to_dict()
+
+
+@app.post("/api/auth/login")
+async def login_user(req: LoginRequest, db: Session = Depends(get_db)):
+    user = db.query(User).filter(User.email == req.email.lower().strip()).first()
+    if not user or user.password_hash != req.password:
+        raise HTTPException(status_code=401, detail="Email yoki parol noto'g'ri.")
+    return user.to_dict()
+
+
+@app.post("/api/auth/subscribe")
+async def subscribe_user(req: SubscribeRequest, db: Session = Depends(get_db)):
+    user = db.query(User).filter(User.email == req.email.lower().strip()).first()
+    if not user:
+        user_id = f"USR-{uuid.uuid4().hex[:6].upper()}"
+        user = User(
+            id=user_id,
+            email=req.email.lower().strip(),
+            username=req.email.split("@")[0].capitalize(),
+            password_hash="demo123",
+            role="Doctor",
+            is_subscribed=1,
+            plan_name="SaaS Obunasi",
+            scan_tokens=99999,
+            card_number=RECEIVING_CARD_NUMBER,
+            created_at=datetime.datetime.now().strftime("%Y-%m-%d")
+        )
+        db.add(user)
+        db.flush()
+
+    if req.plan_type == 'saas':
+        user.is_subscribed = 1
+        user.plan_name = "SaaS Obunasi (Eng ommabop)"
+        user.scan_tokens = 99999
+    elif req.plan_type == 'token':
+        user.is_subscribed = 1
+        user.plan_name = "Token-based to'lov"
+        user.scan_tokens += 100
+    elif req.plan_type == 'university':
+        user.is_subscribed = 1
+        user.plan_name = "Universitet / Tadqiqot Litsenziyasi"
+        user.scan_tokens += 500
+
+    user.card_number = RECEIVING_CARD_NUMBER
+    db.commit()
+    db.refresh(user)
+    return user.to_dict()
+
+
+@app.get("/api/auth/me")
+async def get_current_user_profile(email: Optional[str] = None, db: Session = Depends(get_db)):
+    if email:
+        user = db.query(User).filter(User.email == email.lower().strip()).first()
+        if user:
+            return user.to_dict()
+    default_user = db.query(User).first()
+    if not default_user:
+        default_user = User(
+            id="USR-DR-KARIMOV",
+            email="dr.karimov@clinic.uz",
+            username="Dr. Karimov",
+            password_hash="demo123",
+            role="Pulmonolog",
+            is_subscribed=1,
+            plan_name="SaaS Obunasi",
+            scan_tokens=99999,
+            card_number=RECEIVING_CARD_NUMBER,
+            created_at=datetime.datetime.now().strftime("%Y-%m-%d")
+        )
+        db.add(default_user)
+        db.commit()
+        db.refresh(default_user)
+    return default_user.to_dict()
 
 
 @app.get("/api/history")

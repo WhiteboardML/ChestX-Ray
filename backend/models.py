@@ -105,6 +105,32 @@ class Scan(Base):
             "status": self.status,
             "approved_by": self.approved_by,
             "approved_time": self.approved_time,
-            "raw_scores": self.raw_scores,
-            "findings": self.findings
+        }
+
+
+class User(Base):
+    __tablename__ = "users"
+
+    id = Column(String, primary_key=True, index=True)
+    email = Column(String, unique=True, index=True, nullable=False)
+    username = Column(String, nullable=False)
+    password_hash = Column(String, nullable=False)
+    role = Column(String, default="Doctor")
+    is_subscribed = Column(Integer, default=0)  # 1 = Subscribed, 0 = Unpaid
+    plan_name = Column(String, default="None")  # "SaaS Obunasi", "Token-based", "None"
+    scan_tokens = Column(Integer, default=0)
+    card_number = Column(String, default="4916 9903 3783 3237")
+    created_at = Column(String, nullable=True)
+
+    def to_dict(self):
+        return {
+            "id": self.id,
+            "email": self.email,
+            "username": self.username,
+            "role": self.role,
+            "is_subscribed": bool(self.is_subscribed),
+            "plan_name": self.plan_name,
+            "scan_tokens": self.scan_tokens,
+            "card_number": self.card_number,
+            "created_at": self.created_at
         }

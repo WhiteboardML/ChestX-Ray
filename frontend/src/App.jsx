@@ -13,8 +13,9 @@ export default function App() {
   const [currentPatient, setCurrentPatient] = useState(null);
   const [patients, setPatients] = useState([]);
   const [lang, setLang] = useState('uz'); // 'uz' | 'ru' | 'en'
+  const [currentUser, setCurrentUser] = useState(null);
 
-  // Fetch patience history logs on startup
+  // Fetch current doctor profile and patience history logs on startup
   const fetchHistory = async () => {
     try {
       const res = await fetch('/api/history');
@@ -27,8 +28,21 @@ export default function App() {
     }
   };
 
+  const fetchUserProfile = async () => {
+    try {
+      const res = await fetch('/api/auth/me');
+      if (res.ok) {
+        const userData = await res.json();
+        setCurrentUser(userData);
+      }
+    } catch (e) {
+      console.error("Foydalanuvchi profilini yuklashda xatolik:", e);
+    }
+  };
+
   useEffect(() => {
     fetchHistory();
+    fetchUserProfile();
   }, []);
 
   const handleUploadSuccess = (patient) => {
@@ -90,6 +104,7 @@ export default function App() {
             ) : (
               <DashboardView 
                 onUploadSuccess={handleUploadSuccess}
+                currentUser={currentUser}
                 lang={lang}
               />
             )
@@ -101,7 +116,11 @@ export default function App() {
               lang={lang}
             />
           ) : activeTab === 'tariflar' ? (
-            <PricingView lang={lang} />
+            <PricingView
+              currentUser={currentUser}
+              setCurrentUser={setCurrentUser}
+              lang={lang}
+            />
           ) : activeTab === 'yo\'riqnoma' ? (
             <GuideView lang={lang} />
           ) : (
