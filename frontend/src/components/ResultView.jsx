@@ -795,13 +795,37 @@ export default function ResultView({ patient, onApproveSuccess, lang = 'uz' }) {
                       {msg.name || (msg.sender === 'doctor' ? 'Shifokor' : 'AI Yordamchi')}
                     </span>
                     <div
-                      className={`p-3 rounded-2xl shadow-sm text-xs leading-relaxed ${
+                      className={`p-3.5 rounded-2xl shadow-sm text-xs leading-relaxed whitespace-pre-wrap ${
                         msg.sender === 'doctor'
                           ? 'bg-primary text-white rounded-tr-sm'
-                          : 'bg-white text-on-surface rounded-tl-sm border border-outline-variant/30'
+                          : 'bg-white text-on-surface rounded-tl-sm border border-outline-variant/30 space-y-1'
                       }`}
                     >
-                      {msg.text}
+                      {msg.sender === 'doctor' ? (
+                        msg.text
+                      ) : (
+                        msg.text.split('\n').map((line, idx) => {
+                          if (line.startsWith('### ')) {
+                            return (
+                              <h4 key={idx} className="font-bold text-xs text-primary mt-2 mb-1 border-b border-outline-variant/20 pb-0.5 font-geist">
+                                {line.replace('### ', '')}
+                              </h4>
+                            );
+                          }
+                          const parts = line.split(/(\*\*.*?\*\*)/g);
+                          return (
+                            <div key={idx} className={line.trim() === '' ? 'h-1.5' : 'my-0.5'}>
+                              {parts.map((part, pIdx) =>
+                                part.startsWith('**') && part.endsWith('**') ? (
+                                  <strong key={pIdx} className="font-bold text-on-surface">{part.slice(2, -2)}</strong>
+                                ) : (
+                                  part
+                                )
+                              )}
+                            </div>
+                          );
+                        })
+                      )}
                     </div>
                   </div>
                 ))}

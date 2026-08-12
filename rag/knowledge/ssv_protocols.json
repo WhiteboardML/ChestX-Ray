@@ -2,56 +2,56 @@
   {
     "id": "PROTOCOL-001",
     "disease": "Pneumonia",
-    "title_uz": "Pnevmoniya (O'pka yallig'lanishi) bo'yicha SSV klinik protokoli",
-    "title_ru": "Клинический протокол Минздрава по Пневмонии",
-    "title_en": "MOH Clinical Protocol for Pneumonia",
-    "content_uz": "Pnevmoniya aniqlanganda SSV klinik protokoli bo'yicha: 1. Bemorga ko'p miqdorda iliq suyuqlik va dam olish tavsiya etiladi. 2. Shifokor-pulmonolog ko'rigidan o'tib, balg'am ekmasi va qon tahliliga ko'ra antibakterial terapiya (Amoksitsillin/Klavulanat yoki Azitromitsin) tayinlanadi. 3. Saturatsiya SpO2 < 92% bo'lsa, kislorod terapiyasi va zudlik bilan statsionar yotqizish talab etiladi.",
-    "content_ru": "При выявления пневмонии по клиническому протоколу Минздрава: 1. Рекомендуется обильное теплое питье и постельный режим. 2. Осмотр пульмонолога, анализ мокроты и назначение антибактериальной терапии (Амоксициллин/Клавуланат или Азитромицин). 3. При сатурации SpO2 < 92% требуется оксигенотерапия и экстренная госпитализация.",
-    "content_en": "MOH Pneumonia Protocol: 1. Bed rest and high fluid intake. 2. Pulmonologist consultation for targeted antibacterial therapy (Amoxicillin/Clavulanate or Azithromycin). 3. Oxygen therapy and hospital admission required if SpO2 < 92%.",
-    "tags": ["Pneumonia", "pnevmoniya", "пневмония", "harorat", "isitma", "nafas qisishi", "dori", "doza"]
+    "title_uz": "Pnevmoniya (O'pka Yallig'lanishi) SSV Klinik Protokoli (2025)",
+    "title_ru": "Клинический Протокол Минздрава РУз по Пневмонии (2025)",
+    "title_en": "Uzbekistan MOH Clinical Protocol for Pneumonia (2025)",
+    "content_uz": "### 📋 1. Tashxis va Klinik Mezonlar\n• O'pka to'qimasining o'tkir infektsion yallig'lanishi: harorat ko'tarilishi (>38°C), yo'tal, balg'am, ko'krak qafasidagi og'riq, entikish.\n• Rentgen mezonlari: O'pka maydonida infiltratsiya va soya ko'rinishi.\n\n### 💊 2. Tavsiya etilgan Dori Vositalari va Dozalash Sxemasi\n• **Amoksitsillin / Klavulanat** (Augmentin): 875/125 mg, 1 tabletka x 2 mahal per os (7-10 kun).\n• **Azitromitsin** (Makrolid): 500 mg, 1 tabletka x 1 mahal per os (3-5 kun).\n• **Seftriakson** (Sefalosporin III): 1.0 g, m/o yoki v/i 1-2 mahal (7-10 kun).\n• **Ambroksol / N-atsetilsistein** (Mukolitik): 600 mg/sut balg'am ko'chirish uchun.\n\n### 🚨 3. Shoshilinch Ko'rsatmalar va Statsionar\n• Saturatsiya **SpO2 < 92%** yoki nafas soni **> 30/min** bo'lganda zudlik bilan pulmonologiya/reanimatsiyaga yotqizish va kislorodterapiya berish shart.",
+    "content_ru": "### 📋 1. Диагностика и Клинические Критерии\n• Острое инфекционное воспаление легких: лихорадка (>38°C), кашель с мокротой, боль в груди, одышка.\n• Рентген-признаки: Инфильтрация и очаговые тени в легочной ткани.\n\n### 💊 2. Рекомендуемые Лекарственные Препараты и Дозировки\n• **Амоксициллин / Клавуланат** (Аугментин): 875/125 мг по 1 таб x 2 раза в день (7-10 дней).\n• **Азитромицин** (Макролид): 500 мг по 1 таб x 1 раз в день (3-5 дней).\n• **Цефтриаксон** (Цефалоспорин III): 1.0 г в/м или в/в 1-2 раза в день (7-10 дней).\n• **N-ацетилцистеин / Амброксол**: 600 мг/сут для отхождения мокроты.\n\n### 🚨 3. Экстренные Указания и Госпитализация\n• При сатурации **SpO2 < 92%** или ЧДД **> 30/мин** — немедленная госпитализация в стационар и оксигенотерапия.",
+    "content_en": "### 📋 1. Diagnostic Criteria & Overview\n• Acute infectious lung parenchymal inflammation: fever (>38°C), cough, purulent sputum, chest pain, dyspnea.\n• X-ray findings: Infiltrative opacities and focal consolidation.\n\n### 💊 2. Pharmacotherapy & Dosage Guidelines\n• **Amoxicillin / Clavulanate** (Augmentin): 875/125 mg PO twice daily (7-10 days).\n• **Azithromycin** (Macrolide): 500 mg PO once daily (3-5 days).\n• **Ceftriaxone** (Cephalosporin 3rd gen): 1.0g IM/IV 1-2 times daily (7-10 days).\n• **N-acetylcysteine / Ambroxol**: 600 mg/day for mucolysis.\n\n### 🚨 3. Emergency Directives & Admission Criteria\n• If **SpO2 < 92%** or respiratory rate **> 30/min** — urgent hospital/ICU admission and supplemental oxygen required.",
+    "tags": ["Pneumonia", "pnevmoniya", "пневмония", "augmentin", "azitromitsin", "seftriakson", "dori", "doza"]
   },
   {
     "id": "PROTOCOL-002",
     "disease": "Pneumothorax",
-    "title_uz": "Pnevmotoraks (Plevra bo'shlig'ida havo) bo'yicha Shoshilinch Protokol",
-    "title_ru": "Экстренный протокол при Пневмотораксе",
-    "title_en": "Emergency Protocol for Pneumothorax",
-    "content_uz": "Pnevmotoraks shoshilinch xirurgik holat hisoblanadi. 1. Zudlik bilan 103 shoshilinch yordam chaqirish va bemorni yarim o'tirgan holatda tinchlantirish zarur. 2. Plevra bo'shlig'ini drenajlash (torakostomiya) va kislorod berish talab etiladi. 3. Jismoniy zo'riqish va bosim o'zgarishlari taqiqlanadi.",
-    "content_ru": "Пневмоторакс является экстренным хирургическим состоянием. 1. Немедленный вызов скорой помощи 103, полусидячее положение пациента. 2. Дренирование плевральной полости (торакостомия) и подача кислорода. 3. Запрещены физические нагрузки.",
-    "content_en": "Pneumothorax is an emergency surgical condition. 1. Immediate 103 emergency call, semi-Fowler position. 2. Pleural drainage (thoracostomy) and supplemental oxygen. 3. Physical exertion strictly prohibited.",
-    "tags": ["Pneumothorax", "pnevmotoraks", "пневмоторакс", "shoshilinch", "xirurgiya", "nafas qisishi"]
+    "title_uz": "Pnevmotoraks (Plevra Bo'shlig'ida Havo) Shoshilinch Protokoli",
+    "title_ru": "Экстренный Клинический Протокол при Пневмотораксе",
+    "title_en": "Emergency Clinical Protocol for Pneumothorax",
+    "content_uz": "### 📋 1. Klinik Tushuncha va Belgilar\n• Plevra bo'shlig'ida havo to'planishi va o'pkaning kollapsi (bujmayishi).\n• Belgilari: O'tkir pichoq urgandek og'riq, birdan boshlangan og'ir hansirash, sianoz.\n\n### 💊 2. Shoshilinch Muolajalar va Boshqaruv\n• Drenajlash (Torakostomiya): Plevra bo'shlig'iga drenaj naychasi o'rnatish va passiv/aktiv aspiratsiya.\n• Og'riqsizlantirish: Analgetiklar va tinchlantiruvchi preparatlar.\n• Kislorodterapiya: High-flow oxygen (100% O2) plevradagi havoning so'rilishini tezlashtiradi.\n\n### 🚨 3. Shoshilinch Ko'rsatmalar\n• Turg'un pnevmotoraksda ZUDLIK BILAN 103 chaqiruv va ko'krak xirurgiyasi bo'limiga yotqizish shart.",
+    "content_ru": "### 📋 1. Клинические Признаки и Описание\n• Скопление воздуха в плевральной полости и спадение легкого.\n• Симптомы: Внезапная острая боль в груди, нарастающая одышка, тахикардия.\n\n### 💊 2. Экстренные Мероприятия\n• Дренирование (Торакостомия): Постановка дренажной трубки по Бюлау.\n• Обезболивание: Анальгетики и седативные средства.\n• Инсуффляция кислорода: 100% O2 для ускорения рассасывания воздуха.\n\n### 🚨 3. Экстренные Указания\n• Немедленный вызов экстренной хирургической бригады (103) и экстренная госпитализация.",
+    "content_en": "### 📋 1. Clinical Presentation & Features\n• Presence of air in the pleural space leading to lung collapse.\n• Symptoms: Sudden sharp pleuritic chest pain, severe dyspnea, tachycardia, cyanosis.\n\n### 💊 2. Emergency Management & Interventions\n• Tube Thoracostomy: Intercostal chest drain placement with water-seal suction.\n• Analgesia: Adequate pain management.\n• Supplemental Oxygen: High-flow 100% O2 to accelerate pleural air resorption.\n\n### 🚨 3. Critical Directives\n• Emergency surgical team (103) call and immediate thoracic surgery transfer required.",
+    "tags": ["Pneumothorax", "pnevmotoraks", "пневмоторакс", "shoshilinch", "torakostomiya", "drenaj"]
   },
   {
     "id": "PROTOCOL-003",
     "disease": "Edema",
-    "title_uz": "O'pka Shishi (Pulmonary Edema) bo'yicha Protokol",
-    "title_ru": "Протокол лечения Отека Легких",
-    "title_en": "Clinical Protocol for Pulmonary Edema",
-    "content_uz": "O'pka shishi kritik holatdir. 1. Bemorning oyoqlarini pastga tushirib o'tqazish. 2. Shoshilinch diuretiklar (Furosemid) va venoz vasodilatatorlar beriladi. 3. 100% kislorod terapiyasi va kardiolog/pulmonolog nazorati shart.",
-    "content_ru": "Отек легких является критическим состоянием. 1. Положение пациента сидя с опущенными ногами. 2. Введение петлевых диуретиков (Фуросемид) и вазодилататоров. 3. 100% оксигенотерапия и контроль кардиолога/реаниматолога.",
-    "content_en": "Pulmonary Edema is critical. 1. Upright seating with legs dangling. 2. Emergency loop diuretics (Furosemide) and vasodilators. 3. 100% oxygen therapy and cardiologist oversight.",
-    "tags": ["Edema", "o'pka shishi", "отек легких", "diuretik", "furosemid", "shoshilinch"]
+    "title_uz": "O'pka Shishi (Pulmonary Edema) Shoshilinch Protokoli",
+    "title_ru": "Протокол Экстренной Помощи при Отеке Легких",
+    "title_en": "Emergency Protocol for Pulmonary Edema",
+    "content_uz": "### 📋 1. Klinik Tushuncha va Diagnostika\n• Alveolalarga suyuqlik sizib chiqishi natijasida kelib chiquvchi og'ir hayotga xavfli holat.\n• Belgilar: Bo'g'ilish, ko'pikli pushti balg'am, xirillash, arterial gipertenziya.\n\n### 💊 2. Shoshilinch Farmakoterapiya va Dozalar\n• **Furosemid** (Halqali diuretik): 40-80 mg v/i oqizib (zudlik bilan diurez chaqirish).\n• **Nitroglitserin** (Vasodilatator): 0.5 mg til ostiga yoki v/i perfuzor orqali.\n• **Morphine** (Ko'rsatmaga ko'ra): 2-4 mg v/i bo'g'ilish va xavotirni bosish uchun.\n• **Spironolakton** / Diuretik terapiya nazorati.\n\n### 🚨 3. Shoshilinch Ko'rsatmalar\n• Bemorni o'tirgan holatga keltirish (oyoqlarini pastga tushirish), 100% O2 (ko'pikni bosuvchi spirt bug'lari bilan) berish va Kardioreanimatsiyaga yotqizish.",
+    "content_ru": "### 📋 1. Клинические Признаки\n• Острое накопление жидкости в альвеолах легких.\n• Симптомы: Удушье, пенистая розовая мокрота, клокочущее дыхание, акроцианоз.\n\n### 💊 2. Экстренное Лечение и Дозировки\n• **Фуросемид** (Петлевой диуретик): 40-80 мг в/в струйно немедленно.\n• **Нитроглицерин** (Вазодилататор): 0.5 мг под язык или в/в инфузия.\n• **Морфин**: 2-4 мг в/в для снятия одышки и психомоторного возбуждения.\n\n### 🚨 3. Экстренная Помощь\n• Положение сидя с опущенными ногами, 100% оксигенотерапия (через пеногаситель) и срочная госпитализация в ОРИТ.",
+    "content_en": "### 📋 1. Clinical Overview\n• Acute accumulation of fluid in the pulmonary alveoli impairing gas exchange.\n• Symptoms: Severe orthopnea, frothy pink sputum, rales, cyanosis.\n\n### 💊 2. Emergency Medications & Dosages\n• **Furosemide** (Loop Diuretic): 40-80 mg IV bolus immediately.\n• **Nitroglycerin** (Vasodilator): 0.5 mg sublingually or IV infusion.\n• **Morphine**: 2-4 mg IV to relieve distress and dyspnea.\n\n### 🚨 3. Immediate Directives\n• Upright seating with legs dangling, high-flow 100% O2 therapy, and emergency ICU admission.",
+    "tags": ["Edema", "o'pka shishi", "отек легких", "furosemid", "diuretik", "nitrogleritserin"]
   },
   {
     "id": "PROTOCOL-004",
     "disease": "Atelectasis",
-    "title_uz": "Atelektaz (O me'yordagi gipoventilyatsiya) boyicha Tavsiyalar",
-    "title_ru": "Рекомендации при Ателектазе легкого",
-    "title_en": "Clinical Management of Atelectasis",
-    "content_uz": "Atelektazda o'pka to'qimasining yozilmasligi kuzatiladi. 1. Nafas gimnastikasi va rag'batlantiruvchi spirometriya o'tkaziladi. 2. Balg'am ko'chishini yaxshilash uchun mukolitiklar va postural drenaj tavsiya etiladi. 3. Bronxoskopiya ko'rigi o'tkazilishi mumkin.",
-    "content_ru": "При ателектазе наблюдается спадение легочной ткани. 1. Дыхательная гимнастика и стимулирующая спирометрия. 2. Муколитики и постуральный дренаж для отхождения мокроты. 3. Возможно проведение бронхоскопии.",
-    "content_en": "Atelectasis involves lung tissue collapse. 1. Respiratory gymnastics and incentive spirometry. 2. Mucolytics and postural drainage. 3. Bronchoscopy if obstruction persists.",
-    "tags": ["Atelectasis", "atelektaz", "ателектаз", "nafas gimnastikasi", "spirometriya"]
+    "title_uz": "Atelektaz (O'pka Gipoventilyatsiyasi) Protokoli",
+    "title_ru": "Клинический Протокол при Ателектазе Легкого",
+    "title_en": "Clinical Protocol for Atelectasis",
+    "content_uz": "### 📋 1. Klinik Tushuncha\n• Bronxlar tiqilishi yoki gipoventilyatsiya sababli o me'yordagi o'pka segmenti yoki bo'lagining kollaps bo'lishi (yozilmasligi).\n\n### 💊 2. Davolash va Muolajalar\n• **Nafas Gimnastikasi**: Rag'batlantiruvchi spirometriya (Incentive Spirometry) har soatda 10 marta.\n• **N-atsetilsistein / Ambroksol**: 600 mg/sut balg'am tiqinlarini eritish uchun.\n• **Postural Drenaj**: Pozitsion drenaj va ko'krak qafasi vibratsion massaji.\n• **Sanatsion Bronxoskopiya**: Bronx tiqini saqlansa, bronxoskopiya orqali shilliqni so'rib olish.\n\n### 🚨 3. Vrach Nazorati\n• Infektsiya qo'shilsa antibakterial terapiya tayinlanadi.",
+    "content_ru": "### 📋 1. Определение\n• Спадение легочной ткани вследствие обструкции бронха мокротой или гиповентиляции.\n\n### 💊 2. Лечение и Лечебные Мероприятия\n• **Дыхательная Гимнастика**: Стимулирующая спирометрия каждый час.\n• **Муколитики**: N-ацетилцистеин (600 мг/сут) или Амброксол.\n• **Постуральный Дренаж**: Массаж и позиционный дренаж.\n• **Санационная Бронхоскопия**: При неэффективности консервативной терапии.\n\n### 🚨 3. Врачебный Контроль\n• Мониторинг дыхания и профилактика вторичной пневмонии.",
+    "content_en": "### 📋 1. Clinical Definition\n• Lung collapse involving segment or lobe due to bronchial obstruction or hypoventilation.\n\n### 💊 2. Management & Interventions\n• **Respiratory Exercises**: Incentive spirometry 10 times hourly.\n• **Mucolytics**: N-acetylcysteine (600 mg/day) or Ambroxol.\n• **Postural Drainage**: Chest physiotherapy and positional clearance.\n• **Therapeutic Bronchoscopy**: Indicated if mucus plugging persists.\n\n### 🚨 3. Clinical Follow-up\n• Monitor for secondary pulmonary infections.",
+    "tags": ["Atelectasis", "atelektaz", "ателектаз", "spirometriya", "bronxoskopiya", "atsetilsistein"]
   },
   {
     "id": "PROTOCOL-005",
     "disease": "Effusion",
-    "title_uz": "Plevral Efuziya (Plevra bo'shlig'ida suyuqlik) boyicha Protokol",
-    "title_ru": "Протокол при Плевральном Выпоте",
+    "title_uz": "Plevral Efuziya (Plevral Suyuqlik To'planishi) Protokoli",
+    "title_ru": "Клинический Протокол при Плевральном Выпоте",
     "title_en": "Clinical Protocol for Pleural Effusion",
-    "content_uz": "Plevral efuziya kuzatilganda: 1. UTT (UZI) va rentgenografiya orqali suyuqlik hajmiga baho beriladi. 2. Suyuqlik ko'p bo'lsa, plevral punksiya (torakotsentez) o'tkazilib, diagnostik tahlil qilinadi. 3. Etio-patogenetik davolash tayinlanadi.",
-    "content_ru": "При плевральном выпоте: 1. УЗИ и рентген-контроль объема жидкости. 2. При значительном объеме выполняется плевральная пункция (торакоцентез). 3. Назначается этиопатогенетическая терапия.",
-    "content_en": "For Pleural Effusion: 1. Ultrasound and X-ray volume assessment. 2. Diagnostic or therapeutic thoracentesis if liquid is excessive. 3. Underlying cause targeted treatment.",
-    "tags": ["Effusion", "plevral efuziya", "плевральный выпот", "punksiya", "suyuqlik"]
+    "content_uz": "### 📋 1. Klinik Tushuncha\n• Plevra bo'shlig'ida ekssudat yoki transsudat suyuqlik to'planishi.\n\n### 💊 2. Diagnostika va Davolash Sxemasi\n• **UTT (UZI) va Rentgen Nazorati**: Suyuqlik sathi va hajmini aniqlash.\n• **Plevral Punksiya** (Torakotsentez): Suyuqlik hajmi > 500 ml bo'lganda diagnostik va davolash punksiyasi.\n• **Etiotrop Terapiya**: Pnevmoniyada antibiotiklar, yurak yetishmovchiligida diuretiklar tayinlanadi.\n\n### 🚨 3. Vrach Nazorati\n• Suyuqlik qayta to'planishini UTT yordamida nazorat qilish.",
+    "content_ru": "### 📋 1. Определение\n• Патологическое скопление жидкости в плевральной полости.\n\n### 💊 2. Диагностика и Лечебная Тактика\n• **УЗИ ОГК и Рентгенография**: Оценка объема выпота.\n• **Плевральная Пункция** (Торакоцентез): Выполняется при объеме > 500 мл.\n• **Этиотропная Терапия**: Антибиотики при парапневмоническом выпоте, диуретики при ХСН.\n\n### 🚨 3. Контроль\n• УЗ-контроль динамики рассасывания жидкости.",
+    "content_en": "### 📋 1. Clinical Description\n• Accumulation of fluid (exudate or transudate) in the pleural cavity.\n\n### 💊 2. Management Guidelines\n• **Ultrasound & Radiography**: Quantification of pleural fluid.\n• **Thoracentesis**: Diagnostic/therapeutic aspiration if volume > 500 mL.\n• **Targeted Therapy**: Antibiotics for parapneumonic effusion, diuretics for CHF.\n\n### 🚨 3. Oversight\n• Ultrasound monitoring of fluid reabsorption.",
+    "tags": ["Effusion", "plevral efuziya", "плевральный выпот", "punksiya", "torakotsentez"]
   }
 ]

@@ -50,44 +50,53 @@ def query_rag_assistant(
         model_source = qwen_res["source"]
     elif context_chunks:
         model_source = "Local Vector RAG Engine"
-        context_str = "\n".join(context_chunks)
+        context_str = "\n\n".join(context_chunks)
         if lang == "ru":
             reply = (
-                f"📌 Источник: Национальный клинический стандарт Минздрава РУз 2025 (Приказ №180)\n\n"
-                f"💡 Краткая рекомендация по диагнозу [{diagnosis}]:\n"
+                f"📌 **Источник**: Национальный клинический протокол Минздрава РУз (Приказ №180, 2025)\n\n"
+                f"### 📋 Клинические Рекомендации по Диагнозу [{diagnosis}]:\n\n"
                 f"{context_str}\n\n"
-                f"⚠️ Назначение лекарств подтверждается врачом-пульмонологом."
+                f"### 🚨 Важное Замечание:\n"
+                f"• Назначение и коррекция лекарственных средств подлежат обязательной верификации врачом-пульмонологом."
             )
         elif lang == "en":
             reply = (
-                f"📌 Source: Uzbekistan MOH National Clinical Standard 2025 (Order No. 180)\n\n"
-                f"💡 Summary Recommendation for [{diagnosis}]:\n"
+                f"📌 **Source**: Uzbekistan MOH National Clinical Protocol (Order No. 180, 2025)\n\n"
+                f"### 📋 Clinical Guideline for [{diagnosis}]:\n\n"
                 f"{context_str}\n\n"
-                f"⚠️ Medication regimens require attending physician confirmation."
+                f"### 🚨 Important Notice:\n"
+                f"• All medication regimens and dosage adjustments require attending physician confirmation."
             )
         else:
             reply = (
-                f"📌 Manba: O'zbekiston SSV Milliy Klinik Standarti va Protokoli 2025 (180-sonli buyruq)\n\n"
-                f"💡 [{diagnosis}] bo'yicha qisqa klinik tavsiya:\n"
+                f"📌 **Manba**: O'zbekiston SSV Milliy Klinik Protokoli (180-sonli buyruq, 2025)\n\n"
+                f"### 📋 [{diagnosis}] Bo'yicha Milliy Klinik Tavsiyalar:\n\n"
                 f"{context_str}\n\n"
-                f"⚠️ Eslatma: Dori vositalari tayinlovi vrach-pulmonolog tomonidan tasdiqlanishi shart."
+                f"### 🚨 Muhim Eslatma:\n"
+                f"• Barcha dori-darmon tayinlovlari va dozalash sxemalari vrach-pulmonolog ko'rigi orqali tasdiqlanishi shart."
             )
     else:
         model_source = "Local Vector RAG Engine"
         if lang == "ru":
             reply = (
-                f"📌 Источник: Минздрав РУз (Приказ №180)\n\n"
-                f"• По диагнозу [{diagnosis}] рекомендуется осмотр пульмонолога и повторная рентгенография через 7-10 дней."
+                f"📌 **Источник**: Минздрав РУз (Приказ №180)\n\n"
+                f"### 📋 Рекомендация при [{diagnosis}]:\n\n"
+                f"• Проведение консультации пульмонолога и повторная рентгенография ОГК через 7-10 дней.\n"
+                f"• Оценка клиники и лаборатории (СРБ, ОАК)."
             )
         elif lang == "en":
             reply = (
-                f"📌 Source: Uzbekistan MOH (Order No. 180)\n\n"
-                f"• For diagnosis [{diagnosis}], pulmonologist review and follow-up X-ray in 7-10 days are recommended."
+                f"📌 **Source**: Uzbekistan MOH Guidelines (Order No. 180)\n\n"
+                f"### 📋 Directive for [{diagnosis}]:\n\n"
+                f"• Specialist pulmonologist consultation and follow-up chest X-ray in 7-10 days.\n"
+                f"• Complete blood count and CRP inflammatory markers evaluation."
             )
         else:
             reply = (
-                f"📌 Manba: O'zbekiston SSV (180-sonli buyruq)\n\n"
-                f"• Ushbu [{diagnosis}] bo'yicha vrach-pulmonolog ko'rigi hamda 7-10 kundan so'ng qayta rentgen tahlili tavsiya etiladi."
+                f"📌 **Manba**: O'zbekiston SSV Standarti (180-sonli buyruq)\n\n"
+                f"### 📋 [{diagnosis}] Bo'yicha Tavsiya:\n\n"
+                f"• Vrach-pulmonolog ko'rigi va 7-10 kundan so'ng qayta rentgen tahlili o'tkazish.\n"
+                f"• Umumiy qon va SRO (C-reaktiv oqsil) laborator tahlillarini nazorat qilish."
             )
 
     return {
