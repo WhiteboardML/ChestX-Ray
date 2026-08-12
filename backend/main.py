@@ -31,7 +31,7 @@ from backend.cam_service import generate_gradcam
 from backend.utils import validate_and_load_image
 from backend.schemas import HealthResponse, PredictResponse, AnalyzeResponse, ErrorResponse
 from backend.database import get_db
-from backend.models import Patient, Scan
+from backend.models import Patient, Scan, User
 from backend.init_db import init_db
 from llm.service import chat_with_medical_llm, synthesize_xray_report
 
@@ -821,15 +821,18 @@ async def login_user(req: LoginRequest, db: Session = Depends(get_db)):
 
 @app.post("/api/auth/subscribe")
 async def subscribe_user(req: SubscribeRequest, db: Session = Depends(get_db)):
-    user = db.query(User).filter(User.email == req.email.lower().strip()).first()
+    target_email = (req.email or "dr.karimov@clinic.uz").lower().strip()
+    user = db.query(User).filter(User.email == target_email).first()
+    if not user:
+        user = db.query(User).first()
     if not user:
         user_id = f"USR-{uuid.uuid4().hex[:6].upper()}"
         user = User(
             id=user_id,
-            email=req.email.lower().strip(),
-            username=req.email.split("@")[0].capitalize(),
+            email=target_email,
+            username="Dr. Karimov",
             password_hash="demo123",
-            role="Doctor",
+            role="Pulmonolog",
             is_subscribed=1,
             plan_name="SaaS Obunasi",
             scan_tokens=99999,
