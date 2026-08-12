@@ -55,15 +55,51 @@ pip install --upgrade pip
 pip install -r requirements.txt
 ```
 
-### Step 4: Launch Application
+### Step 4: Launch Application (Production Mode)
 ```bash
 python main.py
 ```
 
 ### Step 5: Access in Browser
-- **Clinical Web Application**: Open [http://localhost:8000](http://localhost:8000)
+- **Clinical Web Application (Full-Stack UI)**: Open [http://localhost:8000](http://localhost:8000)
 - **Log In**: Enter `admin@avicennaai.uz` / `AvicennaAI2026!`
-- **Interactive API Documentation**: Open [http://localhost:8000/docs](http://localhost:8000/docs)
+- **Interactive API Documentation (Swagger)**: Open [http://localhost:8000/docs](http://localhost:8000/docs)
+
+---
+
+## 💻 Running the Frontend (Development & Rebuild Options)
+
+The repository includes pre-compiled frontend assets in `frontend/dist/`, so running `python main.py` serves the complete React Web UI out-of-the-box. 
+
+If you wish to modify or develop the React frontend code, follow these options:
+
+### Option A: Frontend Development Mode (Hot-Reloading)
+For live frontend code modification with instant hot-reloading:
+
+1. **Start Backend Server** (Terminal 1):
+   ```bash
+   python main.py
+   ```
+
+2. **Start React Vite Dev Server** (Terminal 2):
+   ```bash
+   cd frontend
+   npm install
+   npm run dev
+   ```
+
+- **Live Hot-Reloading Web UI**: Open [http://localhost:5173](http://localhost:5173) (Proxies API requests automatically to `http://localhost:8000`).
+
+### Option B: Rebuilding Frontend Assets for Production
+If you make changes inside `frontend/src/` and want to compile new production assets:
+
+```bash
+cd frontend
+npm install
+npm run build
+cd ..
+python main.py
+```
 
 ---
 
