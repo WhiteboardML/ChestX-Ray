@@ -9,7 +9,8 @@ import math
 from typing import List, Dict, Any, Tuple
 
 BASE_DIR = os.path.dirname(os.path.abspath(__file__))
-PROTOCOLS_FILE = os.path.join(BASE_DIR, "knowledge", "ssv_protocols.json")
+KNOWLEDGE_DIR = os.path.join(BASE_DIR, "knowledge")
+PROTOCOLS_FILE = os.path.join(KNOWLEDGE_DIR, "ssv_protocols.json")
 
 
 def tokenize(text: str) -> List[str]:
@@ -34,12 +35,22 @@ class LocalVectorStore:
         self.load_and_index()
 
     def load_and_index(self):
-        """Load JSON knowledge base and build local inverted TF-IDF index."""
-        if not os.path.exists(self.json_path):
-            return
-
-        with open(self.json_path, "r", encoding="utf-8") as f:
-            self.documents = json.load(f)
+        """Load all JSON files in knowledge folder and build local inverted TF-IDF index."""
+        self.documents = []
+        if os.path.exists(KNOWLEDGE_DIR):
+            for file_name in os.listdir(KNOWLEDGE_DIR):
+                if file_name.endswith(".json"):
+                    full_p = os.path.join(KNOWLEDGE_DIR, file_name)
+                    try:
+                        with open(full_p, "r", encoding="utf-8") as f:
+                            docs = json.load(f)
+                            if isinstance(docs, list):
+                                self.documents.extend(docs)
+                    except Exception:
+                        pass
+        elif os.path.exists(self.json_path):
+            with open(self.json_path, "r", encoding="utf-8") as f:
+                self.documents = json.load(f)
 
         num_docs = len(self.documents)
         if num_docs == 0:
