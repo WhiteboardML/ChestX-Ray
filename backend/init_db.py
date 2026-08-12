@@ -10,20 +10,10 @@ logger = logging.getLogger("chest_xray_backend")
 
 
 def init_db():
-    """Create all tables and seed initial demo data if database is empty."""
+    """Create all tables if database is empty."""
     Base.metadata.create_all(bind=engine)
+    logger.info("Database tables initialized cleanly.")
 
-    db: Session = SessionLocal()
-    try:
-        existing_count = db.query(Patient).count()
-        if existing_count == 0:
-            logger.info("Database is empty. Populating initial demo patient records...")
-            seed_initial_data(db)
-            logger.info("Demo patient records seeded successfully into SQLite DB.")
-    except Exception as e:
-        logger.error(f"Database initialization error: {e}", exc_info=True)
-    finally:
-        db.close()
 
 
 def seed_initial_data(db: Session):
