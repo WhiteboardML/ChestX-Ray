@@ -97,6 +97,43 @@ export default function ResultView({ patient, onApproveSuccess, lang = 'uz' }) {
     }
   };
 
+  const [showDisapproveModal, setShowDisapproveModal] = useState(false);
+  const [correctDisease, setCorrectDisease] = useState("Surunkali Obstruktiv O'pka Kasalligi (SOO'K / XOBL)");
+  const [customDiseaseInput, setCustomDiseaseInput] = useState('');
+  const [rejectionReason, setRejectionReason] = useState('');
+  const [isSubmittingDisapproval, setIsSubmittingDisapproval] = useState(false);
+
+  const handleDisapproveSubmit = async (e) => {
+    e.preventDefault();
+    const finalDiagnosis = correctDisease === 'CUSTOM' ? (customDiseaseInput.trim() || "Klinik Tashxis") : correctDisease;
+    setIsSubmittingDisapproval(true);
+    try {
+      const res = await fetch(`/api/disapprove/${patient.id}`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify({
+          doctor_name: "Dr. A. Karimov",
+          correct_diagnosis: finalDiagnosis,
+          rejection_reason: rejectionReason
+        })
+      });
+      if (res.ok) {
+        const updatedPatient = await res.json();
+        onApproveSuccess(updatedPatient);
+        setShowDisapproveModal(false);
+        alert(`Model bashorati rad etildi va to'g'ri tashxis: "${finalDiagnosis}" deb saqlandi!`);
+      } else {
+        alert("Rad etishda xatolik yuzaga keldi.");
+      }
+    } catch(e) {
+      alert("Server xatosi.");
+    } finally {
+      setIsSubmittingDisapproval(false);
+    }
+  };
+
   const handleDownloadPdf = () => {
     window.location.href = `/api/pdf/${patient.id}`;
   };
@@ -824,21 +861,40 @@ export default function ResultView({ patient, onApproveSuccess, lang = 'uz' }) {
             <div className="bg-surface-container-high rounded-[2rem] p-6 border border-outline-variant/50 shadow-inner flex flex-col gap-4">
               <div className="flex items-center gap-3">
                 <span className="relative flex h-3.5 w-3.5">
-                  {!isApproved && <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-[#eca52b] opacity-75"></span>}
-                  <span className={`relative inline-flex rounded-full h-3.5 w-3.5 ${isApproved ? 'bg-success' : 'bg-[#eca52b]'}`}></span>
+                  {patient.status !== 'Tasdiqlangan' && !patient.status?.includes('Rad') && (
+                    <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-[#eca52b] opacity-75"></span>
+                  )}
+                  <span className={`relative inline-flex rounded-full h-3.5 w-3.5 ${
+                    patient.status === 'Tasdiqlangan' ? 'bg-success' : patient.status?.includes('Rad') ? 'bg-error' : 'bg-[#eca52b]'
+                  }`}></span>
                 </span>
                 <span className="text-xs font-bold text-on-surface">
-                  {isApproved ? 'Hujjat shifokor tomonidan tasdiqlangan' : "Shifokor Tasdig'i kutilmoqda"}
+                  {patient.status === 'Tasdiqlangan'
+                    ? 'Hujjat shifokor tomonidan tasdiqlangan ✅'
+                    : patient.status?.includes('Rad')
+                    ? `Shifokor tomonidan to'g'rilangan: ${patient.diagnosis} ❌`
+                    : "Shifokor Tasdig'i kutilmoqda"}
                 </span>
               </div>
 
-              {!isApproved ? (
-                <button
-                  onClick={handleApprove}
-                  className="w-full py-4 bg-success hover:bg-success/90 text-white rounded-2xl text-sm font-bold transition-colors flex items-center justify-center gap-2 shadow-md cursor-pointer"
-                >
-                  <span className="material-symbols-outlined">edit_document</span> Tasdiqlash va Elektron Imzolash
-                </button>
+              {patient.status !== 'Tasdiqlangan' && !patient.status?.includes('Rad') ? (
+                <div className="flex flex-col gap-2.5">
+                  <button
+                    onClick={handleApprove}
+                    className="w-full py-3.5 bg-success hover:bg-success/90 text-white rounded-2xl text-xs font-bold transition-all flex items-center justify-center gap-2 shadow-md cursor-pointer"
+                  >
+                    <span className="material-symbols-outlined text-[18px]">check_circle</span>
+                    <span>Model Bashoratini Tasdiqlash</span>
+                  </button>
+
+                  <button
+                    onClick={() => setShowDisapproveModal(true)}
+                    className="w-full py-3 bg-error/10 hover:bg-error/20 text-error border border-error/30 rounded-2xl text-xs font-bold transition-all flex items-center justify-center gap-2 cursor-pointer"
+                  >
+                    <span className="material-symbols-outlined text-[18px]">cancel</span>
+                    <span>Rad Etish va To'g'ri Tashxis Qo'yish</span>
+                  </button>
+                </div>
               ) : (
                 <div className="flex flex-col gap-3 mt-2 pt-4 border-t border-outline-variant/30">
                   <button
@@ -856,6 +912,113 @@ export default function ResultView({ patient, onApproveSuccess, lang = 'uz' }) {
                 </div>
               )}
             </div>
+
+          </div>
+        </div>
+      )}
+
+      {/* DOCTOR DIAGNOSIS CORRECTION MODAL */}
+      {showDisapproveModal && (
+        <div className="fixed inset-0 z-50 bg-black/60 backdrop-blur-sm flex items-center justify-center p-4">
+          <div className="bg-surface-container-lowest rounded-3xl p-6 shadow-2xl max-w-lg w-full border border-outline-variant/30 flex flex-col gap-5">
+            
+            <div className="flex items-center justify-between border-b border-surface-container-high pb-3">
+              <div className="flex items-center gap-3">
+                <div className="w-10 h-10 rounded-full bg-error/10 flex items-center justify-center text-error">
+                  <span className="material-symbols-outlined">edit_note</span>
+                </div>
+                <div>
+                  <h3 className="font-geist text-lg font-bold text-on-surface">Tashxisni To'g'rilash (Vrach Rad Etishi)</h3>
+                  <p className="text-xs text-on-surface-variant">Model bashoratini rad etib, to'g'ri klinik tashxisni kiriting</p>
+                </div>
+              </div>
+              <button 
+                onClick={() => setShowDisapproveModal(false)}
+                className="w-8 h-8 rounded-full hover:bg-surface-container-high flex items-center justify-center text-on-surface-variant"
+              >
+                <span className="material-symbols-outlined text-[20px]">close</span>
+              </button>
+            </div>
+
+            <form onSubmit={handleDisapproveSubmit} className="flex flex-col gap-4">
+              {/* Current AI Diagnosis Badge */}
+              <div className="p-3 bg-surface-container-low rounded-2xl border border-outline-variant/30 flex items-center justify-between">
+                <span className="text-xs font-semibold text-on-surface-variant">Model taxmini:</span>
+                <span className="text-xs font-bold text-error bg-error/10 px-3 py-1 rounded-full border border-error/20">
+                  {activeScan.diagnosis} ({activeScan.probability}%)
+                </span>
+              </div>
+
+              {/* Disease Dropdown Selector */}
+              <div className="flex flex-col gap-1.5">
+                <label className="text-xs font-bold text-on-surface-variant">To'g'ri Klinik Tashxisni Tanlang:</label>
+                <select
+                  value={correctDisease}
+                  onChange={(e) => setCorrectDisease(e.target.value)}
+                  className="w-full bg-surface border border-outline-variant/40 rounded-2xl p-3 text-xs focus:ring-2 focus:ring-primary/20 outline-none font-semibold text-on-surface"
+                >
+                  <option value="Surunkali Obstruktiv O'pka Kasalligi (SOO'K / XOBL)">Surunkali Obstruktiv O'pka Kasalligi (SOO'K / XOBL)</option>
+                  <option value="Pnevmoniya">Pnevmoniya</option>
+                  <option value="Pnevmotoraks">Pnevmotoraks</option>
+                  <option value="Atelektaz">Atelektaz</option>
+                  <option value="Emfizema">Emfizema</option>
+                  <option value="O'pka shishi">O'pka shishi</option>
+                  <option value="Konsolidatsiya">Konsolidatsiya</option>
+                  <option value="Infiltratsiya">Infiltratsiya</option>
+                  <option value="Plevral efuziya">Plevral efuziya</option>
+                  <option value="Fibroz">Fibroz</option>
+                  <option value="Kardiomegaliya">Kardiomegaliya</option>
+                  <option value="Norma (Me'yorda)">Norma (Me'yorda)</option>
+                  <option value="CUSTOM">Boshqa... (O'zingiz kiriting)</option>
+                </select>
+              </div>
+
+              {/* Custom Disease Input */}
+              {correctDisease === 'CUSTOM' && (
+                <div className="flex flex-col gap-1">
+                  <label className="text-xs font-bold text-on-surface-variant">Aprel Tashxis Nomi:</label>
+                  <input
+                    type="text"
+                    required
+                    value={customDiseaseInput}
+                    onChange={(e) => setCustomDiseaseInput(e.target.value)}
+                    placeholder="Masalan: O'tkir Bronxit yoki Plevrit"
+                    className="w-full bg-surface border border-outline-variant/40 rounded-2xl p-3 text-xs focus:ring-2 focus:ring-primary/20 outline-none"
+                  />
+                </div>
+              )}
+
+              {/* Rejection Reason Textarea */}
+              <div className="flex flex-col gap-1">
+                <label className="text-xs font-bold text-on-surface-variant">Rad etish sababi / Shifokor Izohi (Ixtiyoriy):</label>
+                <textarea
+                  rows={3}
+                  value={rejectionReason}
+                  onChange={(e) => setRejectionReason(e.target.value)}
+                  placeholder="Rentgenogrammada konsolidatsiya o'rniga SOO'K alomatlari yaqqol ko'rinmoqda..."
+                  className="w-full bg-surface border border-outline-variant/40 rounded-2xl p-3 text-xs focus:ring-2 focus:ring-primary/20 outline-none resize-none"
+                />
+              </div>
+
+              {/* Action Buttons */}
+              <div className="flex items-center justify-end gap-3 pt-3 border-t border-surface-container-high">
+                <button
+                  type="button"
+                  onClick={() => setShowDisapproveModal(false)}
+                  className="px-5 py-2.5 rounded-full text-xs font-semibold text-on-surface-variant hover:bg-surface-container-high"
+                >
+                  Bekor qilish
+                </button>
+                <button
+                  type="submit"
+                  disabled={isSubmittingDisapproval}
+                  className="px-6 py-2.5 rounded-full bg-error text-white text-xs font-bold shadow-md hover:bg-error/90 disabled:opacity-50 flex items-center gap-2 cursor-pointer"
+                >
+                  {isSubmittingDisapproval && <span className="w-3.5 h-3.5 border-2 border-white/30 border-t-white rounded-full animate-spin"></span>}
+                  <span>To'g mezonini Saqlash</span>
+                </button>
+              </div>
+            </form>
 
           </div>
         </div>

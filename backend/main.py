@@ -387,6 +387,11 @@ class ChatRequest(BaseModel):
 class ApproveRequest(BaseModel):
     doctor_name: str
 
+class DisapproveRequest(BaseModel):
+    doctor_name: str
+    correct_diagnosis: str
+    rejection_reason: Optional[str] = None
+
 
 @app.get("/api/patients/search")
 async def search_patients(q: str = "", db: Session = Depends(get_db)):
@@ -718,6 +723,32 @@ async def approve_report(patient_id: str, req: ApproveRequest, db: Session = Dep
         latest_scan = patient.scans[0]
         latest_scan.status = "Tasdiqlangan"
         latest_scan.approved_by = req.doctor_name
+        latest_scan.approved_time = app_time
+
+    db.commit()
+    db.refresh(patient)
+    return patient.to_dict()
+
+
+@app.post("/api/disapprove/{patient_id}")
+async def disapprove_report(patient_id: str, req: DisapproveRequest, db: Session = Depends(get_db)):
+    """
+    Doctor Rejection & Diagnosis Correction Endpoint.
+    When AI prediction is wrong, doctor corrects diagnosis and updates patient history.
+    """
+    patient = db.query(Patient).filter(Patient.id == patient_id).first()
+    if not patient:
+        raise HTTPException(status_code=404, detail="Bemor topilmadi")
+
+    app_time = datetime.datetime.now().strftime("Bugun, %H:%M")
+    patient.status = "Rad etilgan (Shifokor to'g'rilagan)"
+    patient.diagnosis = req.correct_diagnosis
+
+    if patient.scans:
+        latest_scan = patient.scans[0]
+        latest_scan.status = "Rad etilgan (Shifokor to'g'rilagan)"
+        latest_scan.diagnosis = req.correct_diagnosis
+        latest_scan.approved_by = f"{req.doctor_name} (Tuzatish: {req.correct_diagnosis})"
         latest_scan.approved_time = app_time
 
     db.commit()
