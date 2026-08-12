@@ -27,17 +27,40 @@ git clone https://github.com/k-obloberdiyev/ChestX-Ray.git
 cd ChestX-Ray
 ```
 
-### Step 2: Install Python Dependencies
+### Step 2: Create & Activate Virtual Environment (Isolated, non-global)
+
+Do **not** install dependencies globally. Create a local, isolated Python virtual environment (`.venv`):
+
+#### On Windows (PowerShell / CMD):
+```powershell
+# Create virtual environment
+python -m venv .venv
+
+# Activate virtual environment
+.venv\Scripts\Activate.ps1
+```
+
+#### On Linux / macOS:
 ```bash
+# Create virtual environment
+python3 -m venv .venv
+
+# Activate virtual environment
+source .venv/bin/activate
+```
+
+### Step 3: Install Dependencies inside Virtual Environment
+```bash
+pip install --upgrade pip
 pip install -r requirements.txt
 ```
 
-### Step 3: Launch Application
+### Step 4: Launch Application
 ```bash
 python main.py
 ```
 
-### Step 4: Access in Browser
+### Step 5: Access in Browser
 - **Clinical Web Application**: Open [http://localhost:8000](http://localhost:8000)
 - **Log In**: Enter `admin@avicennaai.uz` / `AvicennaAI2026!`
 - **Interactive API Documentation**: Open [http://localhost:8000/docs](http://localhost:8000/docs)
