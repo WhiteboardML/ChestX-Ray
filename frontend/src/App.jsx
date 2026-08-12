@@ -7,15 +7,37 @@ import ArchiveView from './components/ArchiveView';
 import GuideView from './components/GuideView';
 import PatientsView from './components/PatientsView';
 import PricingView from './components/PricingView';
+import LoginView from './components/LoginView';
 
 export default function App() {
-  const [activeTab, setActiveTab] = useState('asosiy'); // 'asosiy' | 'bemorlar' | 'arxiv' | 'tariflar' | 'yo\'riqnoma'
+  const [activeTab, setActiveTab] = useState('asosiy');
   const [currentPatient, setCurrentPatient] = useState(null);
   const [patients, setPatients] = useState([]);
-  const [lang, setLang] = useState('uz'); // 'uz' | 'ru' | 'en'
+  const [lang, setLang] = useState('uz');
   const [currentUser, setCurrentUser] = useState(null);
+  const [authReady, setAuthReady] = useState(false); // prevents flash
 
-  // Fetch current doctor profile and patience history logs on startup
+  // Restore session from sessionStorage on mount
+  useEffect(() => {
+    const savedEmail = sessionStorage.getItem('avicenna_user_email');
+    if (savedEmail) {
+      fetch(`/api/auth/me?email=${encodeURIComponent(savedEmail)}`)
+        .then((res) => (res.ok ? res.json() : null))
+        .then((userData) => {
+          if (userData) setCurrentUser(userData);
+          setAuthReady(true);
+        })
+        .catch(() => setAuthReady(true));
+    } else {
+      setAuthReady(true);
+    }
+  }, []);
+
+  // Fetch patient history when user is logged in
+  useEffect(() => {
+    if (currentUser) fetchHistory();
+  }, [currentUser]);
+
   const fetchHistory = async () => {
     try {
       const res = await fetch('/api/history');
@@ -24,26 +46,21 @@ export default function App() {
         setPatients(data);
       }
     } catch (e) {
-      console.error("Bemorlar tarixini yuklashda xatolik yuzaga keldi:", e);
+      console.error('Bemorlar tarixini yuklashda xatolik:', e);
     }
   };
 
-  const fetchUserProfile = async () => {
-    try {
-      const res = await fetch('/api/auth/me');
-      if (res.ok) {
-        const userData = await res.json();
-        setCurrentUser(userData);
-      }
-    } catch (e) {
-      console.error("Foydalanuvchi profilini yuklashda xatolik:", e);
-    }
+  const handleLoginSuccess = (user) => {
+    setCurrentUser(user);
   };
 
-  useEffect(() => {
-    fetchHistory();
-    fetchUserProfile();
-  }, []);
+  const handleLogout = () => {
+    sessionStorage.removeItem('avicenna_user_email');
+    setCurrentUser(null);
+    setCurrentPatient(null);
+    setPatients([]);
+    setActiveTab('asosiy');
+  };
 
   const handleUploadSuccess = (patient) => {
     setCurrentPatient(patient);
@@ -72,6 +89,20 @@ export default function App() {
     setPatients((prev) => [newPatient, ...prev]);
   };
 
+  // Prevent flash while restoring session
+  if (!authReady) {
+    return (
+      <div className="min-h-screen bg-[#0f172a] flex items-center justify-center">
+        <span className="w-8 h-8 border-4 border-teal-400/30 border-t-teal-400 rounded-full animate-spin" />
+      </div>
+    );
+  }
+
+  // If not logged in — show auth screen
+  if (!currentUser) {
+    return <LoginView onLoginSuccess={handleLoginSuccess} />;
+  }
+
   return (
     <div className="bg-surface font-sans text-on-surface flex min-h-screen">
       {/* Global Navigation Sidebar */}
@@ -85,11 +116,13 @@ export default function App() {
       {/* Main App Frame */}
       <div className="flex-1 pl-[280px] min-h-screen flex flex-col">
         {/* Sticky Header */}
-        <Header 
-          patientCount={patients.length} 
+        <Header
+          patientCount={patients.length}
           onNewAnalysis={handleNewAnalysis}
           lang={lang}
           setLang={setLang}
+          currentUser={currentUser}
+          onLogout={handleLogout}
         />
 
         {/* Body Router Content */}
@@ -102,7 +135,7 @@ export default function App() {
                 lang={lang}
               />
             ) : (
-              <DashboardView 
+              <DashboardView
                 onUploadSuccess={handleUploadSuccess}
                 currentUser={currentUser}
                 lang={lang}
@@ -121,7 +154,7 @@ export default function App() {
               setCurrentUser={setCurrentUser}
               lang={lang}
             />
-          ) : activeTab === 'yo\'riqnoma' ? (
+          ) : activeTab === "yo'riqnoma" ? (
             <GuideView lang={lang} />
           ) : (
             <ArchiveView

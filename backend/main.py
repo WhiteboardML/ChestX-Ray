@@ -795,10 +795,10 @@ async def register_user(req: RegisterRequest, db: Session = Depends(get_db)):
         username=req.username.strip(),
         password_hash=req.password,
         role="Doctor",
-        is_subscribed=0,  # Unpaid until plan purchased
-        plan_name="None",
-        scan_tokens=0,
-        card_number=RECEIVING_CARD_NUMBER,
+        is_subscribed=1,          # Unlimited access by default
+        plan_name="SaaS Obunasi (Cheksiz)",
+        scan_tokens=99999,
+        card_number=None,
         created_at=datetime.datetime.now().strftime("%Y-%m-%d")
     )
     db.add(new_user)
