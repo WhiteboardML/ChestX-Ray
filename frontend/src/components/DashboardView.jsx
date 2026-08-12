@@ -458,6 +458,25 @@ export default function DashboardView({ onUploadSuccess, lang = 'uz' }) {
               <div ref={chatMessagesEndRef} />
             </div>
 
+            {/* Quick-Prompt Question Chips */}
+            <div className="mb-3">
+              <span className="text-[10px] font-bold text-on-surface-variant uppercase tracking-wider mb-1.5 block">
+                {t.quick_prompts_title || "Tezkor Savollar:"}
+              </span>
+              <div className="flex flex-wrap gap-1.5 max-h-24 overflow-y-auto scrollbar-none pb-1">
+                {(t.quick_prompts || []).map((promptText, pIdx) => (
+                  <button
+                    key={pIdx}
+                    type="button"
+                    onClick={() => sendChatMessage(promptText)}
+                    className="text-[11px] font-medium px-2.5 py-1 rounded-full bg-surface-container-high hover:bg-primary/10 hover:text-primary hover:border-primary/30 border border-outline-variant/30 text-on-surface transition-all cursor-pointer shadow-2xs whitespace-nowrap"
+                  >
+                    {promptText}
+                  </button>
+                ))}
+              </div>
+            </div>
+
             {/* Chat Input */}
             <div className="mt-auto">
               <form onSubmit={handleChatSubmit} className="relative flex items-center gap-2">

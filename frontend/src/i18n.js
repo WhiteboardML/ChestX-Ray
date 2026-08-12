@@ -88,7 +88,17 @@ export const translations = {
     chat_assistant_name: "SSV AI Yordamchi",
     chat_status_online: "Tibbiy maslahat • Onlayn",
     chat_placeholder: "Simptom yoki savol yozing...",
-    btn_send: "Yuborish"
+    btn_send: "Yuborish",
+
+    // Quick Prompts
+    quick_prompts_title: "Tezkor Savollar:",
+    quick_prompts: [
+      "💊 SOO'K dori vositalari va dozalari",
+      "🚨 Statsionarga yotqizish mezonlari",
+      "🫁 mMRC va CAT shkalalari bo'yicha guruhlash",
+      "🩺 SOO'K xurujida birinchi yordam va antibakterial terapiya",
+      "💉 Vaktsinatsiya (Gripp va Pnevmokok) tartibi"
+    ]
   },
 
   ru: {
@@ -176,7 +186,17 @@ export const translations = {
     chat_assistant_name: "ИИ Ассистент Минздрава",
     chat_status_online: "Медицинская консультация • Онлайн",
     chat_placeholder: "Введите симптом или вопрос...",
-    btn_send: "Отправить"
+    btn_send: "Отправить",
+
+    // Quick Prompts
+    quick_prompts_title: "Частые вопросы:",
+    quick_prompts: [
+      "💊 Препараты и дозировки при ХОБЛ",
+      "🚨 Критерии госпитализации",
+      "🫁 Шкалы mMRC, CAT и GOLD A-B-E",
+      "🩺 Первая помощь и антибиотики при обострении",
+      "💉 Порядок вакцинации (Грипп и Пневмококк)"
+    ]
   },
 
   en: {
@@ -264,7 +284,17 @@ export const translations = {
     chat_assistant_name: "MOH AI Assistant",
     chat_status_online: "Medical Advice • Online",
     chat_placeholder: "Type symptom or question...",
-    btn_send: "Send"
+    btn_send: "Send",
+
+    // Quick Prompts
+    quick_prompts_title: "Quick Questions:",
+    quick_prompts: [
+      "💊 COPD Medications & Dosages",
+      "🚨 Hospitalization Criteria",
+      "🫁 GOLD A-B-E & mMRC/CAT Scales",
+      "🩺 Exacerbation Management & Antibiotics",
+      "💉 Vaccination Schedule (Flu & Pneumococcal)"
+    ]
   }
 };
 

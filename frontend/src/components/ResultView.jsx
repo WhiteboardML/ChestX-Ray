@@ -784,14 +784,28 @@ export default function ResultView({ patient, onApproveSuccess, lang = 'uz' }) {
               </div>
 
               {/* Chat Input */}
-              <div className="p-3 bg-surface-container-low border-t border-outline-variant/30">
+              <div className="p-3 bg-surface-container-low border-t border-outline-variant/30 flex flex-col gap-2">
+                {/* Quick Prompts */}
+                <div className="flex flex-wrap gap-1 max-h-20 overflow-y-auto scrollbar-none">
+                  {(t.quick_prompts || []).map((promptText, pIdx) => (
+                    <button
+                      key={pIdx}
+                      type="button"
+                      onClick={() => sendChatMessage(promptText)}
+                      className="text-[10px] font-medium px-2 py-0.5 rounded-full bg-white hover:bg-primary/10 hover:text-primary border border-outline-variant/30 text-on-surface transition-all cursor-pointer whitespace-nowrap"
+                    >
+                      {promptText}
+                    </button>
+                  ))}
+                </div>
+
                 <form onSubmit={handleChatSubmit} className="relative flex items-center gap-2">
                   <div className="relative flex-1">
                     <input
                       value={chatInput}
                       onChange={(e) => setChatInput(e.target.value)}
                       className="w-full bg-white border border-outline-variant/40 rounded-full py-2.5 pl-4 pr-10 text-xs focus:outline-none focus:ring-1 focus:ring-primary/40 text-on-surface placeholder:text-on-surface-variant/45"
-                      placeholder="Savol yozing..."
+                      placeholder={t.chat_placeholder || "Savol yozing..."}
                       type="text"
                     />
                   </div>
