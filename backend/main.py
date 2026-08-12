@@ -21,6 +21,7 @@ from fastapi.middleware.cors import CORSMiddleware
 from pydantic import BaseModel
 from PIL import Image, ImageDraw, ImageFilter
 from sqlalchemy.orm import Session
+from sqlalchemy import or_, func, desc
 
 from backend.config import MODEL_NAME, MAX_IMAGE_SIZE_BYTES, get_pathology_uz, get_pathology_en
 from backend.model_service import load_model, get_model, get_device
@@ -388,28 +389,38 @@ class ApproveRequest(BaseModel):
 
 
 @app.get("/api/patients/search")
-async def search_patients(q: str = ""):
+async def search_patients(q: str = "", db: Session = Depends(get_db)):
     """
-    Search existing patients by name, surname or patient ID for real-time autocomplete during upload.
+    Search existing patients by name, surname, or patient ID in SQLite database via SQLAlchemy.
     """
     q_clean = q.strip().lower()
+    if not q_clean:
+        patients = db.query(Patient).order_by(desc(Patient.id)).limit(10).all()
+    else:
+        patients = db.query(Patient).filter(
+            or_(
+                func.lower(Patient.name).contains(q_clean),
+                func.lower(Patient.first_name).contains(q_clean),
+                func.lower(Patient.last_name).contains(q_clean),
+                func.lower(Patient.id).contains(q_clean)
+            )
+        ).order_by(desc(Patient.id)).all()
+
     results = []
-    for pid, p in PATIENTS_DATABASE.items():
-        full = f"{p.get('first_name', '')} {p.get('last_name', '')} {p.get('name', '')} {pid}".lower()
-        if not q_clean or q_clean in full:
-            scans = p.get("scans", [])
-            last_scan = scans[-1] if scans else {}
-            results.append({
-                "id": pid,
-                "name": p.get("name", f"{p.get('first_name', '')} {p.get('last_name', '')}".strip() or "Bemor"),
-                "first_name": p.get("first_name", ""),
-                "last_name": p.get("last_name", ""),
-                "age": p.get("age", 40),
-                "gender": p.get("gender", "Erkak"),
-                "scan_count": len(scans),
-                "last_diagnosis": last_scan.get("diagnosis", p.get("diagnosis", "Noma'lum")),
-                "last_scan_time": last_scan.get("timestamp", p.get("upload_time", "Noma'lum"))
-            })
+    for p in patients:
+        scans = p.scans
+        last_scan = scans[0] if scans else None
+        results.append({
+            "id": p.id,
+            "name": p.name,
+            "first_name": p.first_name or "",
+            "last_name": p.last_name or "",
+            "age": p.age,
+            "gender": p.gender,
+            "scan_count": len(scans),
+            "last_diagnosis": last_scan.diagnosis if last_scan else (p.diagnosis or "Noma'lum"),
+            "last_scan_time": last_scan.timestamp if last_scan else (p.created_at or "Noma'lum")
+        })
     return results
 
 
@@ -559,38 +570,36 @@ async def upload_xray(
     timestamp_str = datetime.datetime.now().strftime("Bugun, %H:%M")
     scan_id = f"SCAN-{uuid.uuid4().hex[:6].upper()}"
 
-    # Database Persistence via SQLAlchemy
+    # Database Persistence via SQLAlchemy (Auto-match existing patients by ID or Name)
+    f_name = (first_name or "").strip()
+    l_name = (last_name or "").strip()
+    full_name = f"{l_name} {f_name}".strip() or "Yangi Bemor"
+
+    patient = None
     if existing_patient_id:
         patient = db.query(Patient).filter(Patient.id == existing_patient_id).first()
-        if patient:
-            patient.diagnosis = top_disease_uz
-            patient.probability = prob_percentage
-            patient.status = "Ko'rik kutilmoqda"
-        else:
-            f_name = (first_name or "").strip()
-            l_name = (last_name or "").strip()
-            full_name = f"{l_name} {f_name}".strip() or "Yangi Bemor"
-            patient = Patient(
-                id=existing_patient_id,
-                first_name=f_name,
-                last_name=l_name,
-                name=full_name,
-                age=age if age is not None else 40,
-                gender=gender if gender else "Erkak",
-                phone="+998 90 123-45-67",
-                medical_status="Nazoratda",
-                created_at=datetime.datetime.now().strftime("%Y-%m-%d"),
-                status="Ko'rik kutilmoqda",
-                diagnosis=top_disease_uz,
-                probability=prob_percentage
-            )
-            db.add(patient)
-            db.flush()
+
+    if not patient and f_name and l_name:
+        patient = db.query(Patient).filter(
+            func.lower(Patient.first_name) == f_name.lower(),
+            func.lower(Patient.last_name) == l_name.lower()
+        ).first()
+
+    if not patient and full_name and full_name != "Yangi Bemor":
+        patient = db.query(Patient).filter(
+            func.lower(Patient.name) == full_name.lower()
+        ).first()
+
+    if patient:
+        patient.diagnosis = top_disease_uz
+        patient.probability = prob_percentage
+        patient.status = "Ko'rik kutilmoqda"
+        if f_name and not patient.first_name:
+            patient.first_name = f_name
+        if l_name and not patient.last_name:
+            patient.last_name = l_name
     else:
-        pid = f"MX-{uuid.uuid4().hex[:4].upper()}"
-        f_name = (first_name or "").strip()
-        l_name = (last_name or "").strip()
-        full_name = f"{l_name} {f_name}".strip() or "Yangi Bemor"
+        pid = existing_patient_id or f"MX-{uuid.uuid4().hex[:4].upper()}"
         patient = Patient(
             id=pid,
             first_name=f_name,
