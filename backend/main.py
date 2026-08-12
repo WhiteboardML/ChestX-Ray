@@ -224,68 +224,130 @@ PATIENTS_DATABASE = {}
 INITIAL_PATIENTS = [
     {
         "id": "MX-8924",
+        "first_name": "B. M.",
+        "last_name": "Azizov",
         "name": "Azizov B. M.",
         "age": 42,
         "gender": "Erkak",
-        "upload_time": "bugun, 11:20",
-        "diagnosis": "Pnevmoniya",
-        "probability": 89.0,
-        "original_image": "/static/samples/sample_pneumonia.png",
-        "heatmap_image": "/static/samples/heatmap_pneumonia.png",
-        "status": "Ko'rik kutilmoqda",
-        "approved_by": None,
-        "approved_time": None,
-        "raw_scores": [
-            {"disease": "Pneumonia", "disease_uz": "Pnevmoniya", "score": 0.89},
-            {"disease": "Atelectasis", "disease_uz": "Atelektaz", "score": 0.45},
-            {"disease": "Effusion", "disease_uz": "Plevral efuziya", "score": 0.32},
-            {"disease": "Lung Opacity", "disease_uz": "O'pka xiralashishi", "score": 0.78},
-            {"disease": "Infiltration", "disease_uz": "Infiltratsiya", "score": 0.21}
-        ],
-        "findings": {
-            "summary": "O'pkaning chap tomonida pnevmoniya (Pneumonia) alomatlari aniqlandi.",
-            "simple_lang": "Bu o'z vaqtida shifokor nazoratida davolansa, asoratsiz tez o'tib ketadigan yallig'lanish. Xavotirga o'rin yo'q.",
-            "precautions": [
-                "Ko'p miqdorda iliq suyuqlik (limonli choy, namatak damlamasi) iching.",
-                "Tana haroratini muntazam o'lchang (38.5°C dan oshsa paratsetamol qabul qiling).",
-                "Hududiy shifokorga nafas a'zolarini stetoskop bilan eshittiring."
-            ],
-            "technical": "TorchXRayVision DenseNet-121 model rentgenogrammada segmentar infiltratsiya va Pneumonia (0.89 raw score) belgilarini ko'rsatdi."
-        }
+        "created_at": "2026-08-01",
+        "scans": [
+            {
+                "scan_id": "SCAN-8924-1",
+                "timestamp": "01.08.2026, 11:20",
+                "diagnosis": "Pnevmoniya",
+                "diagnosis_eng": "Pneumonia",
+                "probability": 89.0,
+                "original_image": "/static/samples/sample_pneumonia.png",
+                "heatmap_image": "/static/samples/heatmap_pneumonia.png",
+                "status": "Tasdiqlangan",
+                "approved_by": "Dr. A. Karimov",
+                "approved_time": "01.08.2026, 14:00",
+                "raw_scores": [
+                    {"disease": "Pneumonia", "disease_uz": "Pnevmoniya", "score": 0.89},
+                    {"disease": "Atelectasis", "disease_uz": "Atelektaz", "score": 0.45},
+                    {"disease": "Effusion", "disease_uz": "Plevral efuziya", "score": 0.32},
+                    {"disease": "Lung Opacity", "disease_uz": "O'pka xiralashishi", "score": 0.78},
+                    {"disease": "Infiltration", "disease_uz": "Infiltratsiya", "score": 0.21}
+                ],
+                "findings": {
+                    "summary": "O'pkaning chap tomonida pnevmoniya (Pneumonia) alomatlari aniqlandi.",
+                    "simple_lang": "Bu o'z vaqtida shifokor nazoratida davolansa, asoratsiz tez o'tib ketadigan yallig'lanish.",
+                    "precautions": [
+                        "Ko'p miqdorda iliq suyuqlik iching.",
+                        "Tana haroratini muntazam o'lchang.",
+                        "Hududiy shifokorga nafas a'zolarini stetoskop bilan eshittiring."
+                    ],
+                    "technical": "TorchXRayVision DenseNet-121 model rentgenogrammada segmentar infiltratsiya va Pneumonia (0.89 raw score) belgilarini ko'rsatdi."
+                }
+            },
+            {
+                "scan_id": "SCAN-8924-2",
+                "timestamp": "Bugun, 10:15",
+                "diagnosis": "Norma",
+                "diagnosis_eng": "Normal",
+                "probability": 15.2,
+                "original_image": "/static/samples/sample_normal.png",
+                "heatmap_image": "/static/samples/heatmap_normal.png",
+                "status": "Ko'rik kutilmoqda",
+                "approved_by": None,
+                "approved_time": None,
+                "raw_scores": [
+                    {"disease": "Pneumonia", "disease_uz": "Pnevmoniya", "score": 0.152},
+                    {"disease": "Atelectasis", "disease_uz": "Atelektaz", "score": 0.08},
+                    {"disease": "Effusion", "disease_uz": "Plevral efuziya", "score": 0.05},
+                    {"disease": "Lung Opacity", "disease_uz": "O'pka xiralashishi", "score": 0.12},
+                    {"disease": "Infiltration", "disease_uz": "Infiltratsiya", "score": 0.09}
+                ],
+                "findings": {
+                    "summary": "O'pka to'qimalarida sezilarli ijobiy dinamika kuzatildi. Pnevmoniya o'chog'i to'liq so'rilgan.",
+                    "simple_lang": "Ijobiy dinamika! O'pka shamollashi to'liq tuzalgan va to'qimalar me'yoriga qaytgan.",
+                    "precautions": [
+                        "Profilaktik nafas mashqlarini bajarishni davom eting.",
+                        "Muntazam sog'lom turmush tarziga rioya qiling."
+                    ],
+                    "technical": "Takroriy rentgenogramma: Pneumonia raw score 0.89 dan 0.152 ga kamaydi (Ijobiy klinik dinamika)."
+                }
+            }
+        ]
     },
     {
         "id": "MX-9842",
+        "first_name": "B. T.",
+        "last_name": "Abdullaev",
         "name": "Abdullaev B. T.",
         "age": 45,
         "gender": "Erkak",
-        "upload_time": "bugun, 10:45",
-        "diagnosis": "Infiltratsiya",
-        "probability": 94.0,
-        "original_image": "/static/samples/sample_tb.png",
-        "heatmap_image": "/static/samples/heatmap_tb.png",
-        "status": "Tasdiqlangan",
-        "approved_by": "Dr. A. Karimov",
-        "approved_time": "Bugun, 14:32",
-        "raw_scores": [
-            {"disease": "Infiltration", "disease_uz": "Infiltratsiya", "score": 0.94},
-            {"disease": "Consolidation", "disease_uz": "Konsolidatsiya", "score": 0.62},
-            {"disease": "Pleural_Thickening", "disease_uz": "Plevra qalinlashishi", "score": 0.58}
-        ],
-        "findings": {
-            "summary": "O'pkaning o'ng tepa qismida infiltrativ o'choqlar aniqlandi.",
-            "simple_lang": "O'pka yuqori qismida chuqurroq laborator tahlillarni talab qiladigan o'zgarishlar bor. Zamonaviy tibbiyot bilan buni to'liq davolash mumkin.",
-            "precautions": [
-                "Zudlik bilan ftiziatr shifokor tekshiruviga yoziling.",
-                "Genexpert balg'am testini topshiring.",
-                "Yaqin oila a'zolaringizni profilaktik flurografiyaga yo'naltiring."
-            ],
-            "technical": "Apikal o'pka maydonida o'choqli fibro-infiltrativ intensiv o'zgarishlar. DenseNet-121 raw model score: 0.94."
-        }
+        "created_at": "2026-08-05",
+        "scans": [
+            {
+                "scan_id": "SCAN-9842-1",
+                "timestamp": "05.08.2026, 10:45",
+                "diagnosis": "Infiltratsiya",
+                "diagnosis_eng": "Infiltration",
+                "probability": 94.0,
+                "original_image": "/static/samples/sample_tb.png",
+                "heatmap_image": "/static/samples/heatmap_tb.png",
+                "status": "Tasdiqlangan",
+                "approved_by": "Dr. A. Karimov",
+                "approved_time": "05.08.2026, 14:32",
+                "raw_scores": [
+                    {"disease": "Infiltration", "disease_uz": "Infiltratsiya", "score": 0.94},
+                    {"disease": "Consolidation", "disease_uz": "Konsolidatsiya", "score": 0.62},
+                    {"disease": "Pleural_Thickening", "disease_uz": "Plevra qalinlashishi", "score": 0.58}
+                ],
+                "findings": {
+                    "summary": "O'pkaning o'ng tepa qismida infiltrativ o'choqlar aniqlandi.",
+                    "simple_lang": "O'pka yuqori qismida chuqurroq laborator tahlillarni talab qiladigan o'zgarishlar bor.",
+                    "precautions": [
+                        "Zudlik bilan ftiziatr shifokor tekshiruviga yoziling.",
+                        "Genexpert balg'am testini topshiring.",
+                        "Yaqin oila a'zolaringizni profilaktik flurografiyaga yo'naltiring."
+                    ],
+                    "technical": "Apikal o'pka maydonida o'choqli fibro-infiltrativ intensiv o'zgarishlar. DenseNet-121 raw model score: 0.94."
+                }
+            }
+        ]
     }
 ]
 
 for p in INITIAL_PATIENTS:
-    PATIENTS_DATABASE[p["id"]] = p
+    latest_scan = p["scans"][-1]
+    p_dict = dict(p)
+    # Mirror latest scan properties to top-level for backwards compatibility
+    p_dict.update({
+        "upload_time": latest_scan["timestamp"],
+        "diagnosis": latest_scan["diagnosis"],
+        "diagnosis_eng": latest_scan.get("diagnosis_eng", "Pneumonia"),
+        "probability": latest_scan["probability"],
+        "original_image": latest_scan["original_image"],
+        "heatmap_image": latest_scan["heatmap_image"],
+        "status": latest_scan["status"],
+        "approved_by": latest_scan["approved_by"],
+        "approved_time": latest_scan["approved_time"],
+        "raw_scores": latest_scan["raw_scores"],
+        "findings": latest_scan["findings"]
+    })
+    PATIENTS_DATABASE[p["id"]] = p_dict
 
 
 def populate_sample_images():
@@ -318,11 +380,45 @@ class ApproveRequest(BaseModel):
     doctor_name: str
 
 
+@app.get("/api/patients/search")
+async def search_patients(q: str = ""):
+    """
+    Search existing patients by name, surname or patient ID for real-time autocomplete during upload.
+    """
+    q_clean = q.strip().lower()
+    results = []
+    for pid, p in PATIENTS_DATABASE.items():
+        full = f"{p.get('first_name', '')} {p.get('last_name', '')} {p.get('name', '')} {pid}".lower()
+        if not q_clean or q_clean in full:
+            scans = p.get("scans", [])
+            last_scan = scans[-1] if scans else {}
+            results.append({
+                "id": pid,
+                "name": p.get("name", f"{p.get('first_name', '')} {p.get('last_name', '')}".strip() or "Bemor"),
+                "first_name": p.get("first_name", ""),
+                "last_name": p.get("last_name", ""),
+                "age": p.get("age", 40),
+                "gender": p.get("gender", "Erkak"),
+                "scan_count": len(scans),
+                "last_diagnosis": last_scan.get("diagnosis", p.get("diagnosis", "Noma'lum")),
+                "last_scan_time": last_scan.get("timestamp", p.get("upload_time", "Noma'lum"))
+            })
+    return results
+
+
 @app.post("/api/upload")
-async def upload_xray(file: UploadFile = File(...)):
+async def upload_xray(
+    file: UploadFile = File(...),
+    first_name: Optional[str] = Form(None),
+    last_name: Optional[str] = Form(None),
+    age: Optional[int] = Form(None),
+    gender: Optional[str] = Form(None),
+    existing_patient_id: Optional[str] = Form(None)
+):
     """
     Upload X-ray image from Web UI.
     Runs TorchXRayVision DenseNet-121 inference & Grad-CAM heatmap generation!
+    Attaches scan to existing patient profile if existing_patient_id is provided.
     """
     filename_lower = file.filename.lower()
     if not (filename_lower.endswith('.png') or filename_lower.endswith('.jpg') or
@@ -373,8 +469,6 @@ async def upload_xray(file: UploadFile = File(...)):
         with open(heatmap_dest_path, "wb") as h_buffer:
             h_buffer.write(image_bytes)
 
-    pid = f"MX-{uuid.uuid4().hex[:4].upper()}"
-
     summary_text = f"TorchXRayVision DenseNet-121 tahliliga ko'ra asosiy patologiya: {top_disease_uz} ({top_disease_eng}, raw score: {top_score:.3f})."
     simple_text = f"Sun'iy intellekt rentgen tasvirida {top_disease_uz} xususiyatlarini aniqladi. O'z vaqtida shifokor ko'rigidan o'tish tavsiya etiladi."
     precautions = [
@@ -391,12 +485,12 @@ async def upload_xray(file: UploadFile = File(...)):
         "technical": technical_text
     }
 
-    patient_record = {
-        "id": pid,
-        "name": "Yangi Bemor",
-        "age": 40,
-        "gender": "Erkak",
-        "upload_time": "Zudlik bilan",
+    timestamp_str = datetime.datetime.now().strftime("Bugun, %H:%M")
+    scan_id = f"SCAN-{uuid.uuid4().hex[:6].upper()}"
+
+    new_scan = {
+        "scan_id": scan_id,
+        "timestamp": timestamp_str,
         "diagnosis": top_disease_uz,
         "diagnosis_eng": top_disease_eng,
         "probability": prob_percentage,
@@ -409,8 +503,59 @@ async def upload_xray(file: UploadFile = File(...)):
         "findings": findings
     }
 
-    PATIENTS_DATABASE[pid] = patient_record
-    return patient_record
+    if existing_patient_id and existing_patient_id in PATIENTS_DATABASE:
+        patient_record = PATIENTS_DATABASE[existing_patient_id]
+        if "scans" not in patient_record:
+            patient_record["scans"] = []
+        patient_record["scans"].append(new_scan)
+        # Update patient record with new scan details
+        patient_record.update({
+            "upload_time": timestamp_str,
+            "diagnosis": top_disease_uz,
+            "diagnosis_eng": top_disease_eng,
+            "probability": prob_percentage,
+            "original_image": f"/uploads/{image_filename}",
+            "heatmap_image": f"/uploads/{heatmap_filename}",
+            "status": "Ko'rik kutilmoqda",
+            "approved_by": None,
+            "approved_time": None,
+            "raw_scores": raw_predictions,
+            "findings": findings
+        })
+        PATIENTS_DATABASE[existing_patient_id] = patient_record
+        return patient_record
+    else:
+        pid = f"MX-{uuid.uuid4().hex[:4].upper()}"
+        f_name = (first_name or "").strip()
+        l_name = (last_name or "").strip()
+        full_name = f"{l_name} {f_name}".strip() or "Yangi Bemor"
+        patient_age = age if age is not None else 40
+        patient_gender = gender if gender else "Erkak"
+
+        patient_record = {
+            "id": pid,
+            "first_name": f_name,
+            "last_name": l_name,
+            "name": full_name,
+            "age": patient_age,
+            "gender": patient_gender,
+            "created_at": datetime.datetime.now().strftime("%Y-%m-%d"),
+            "upload_time": timestamp_str,
+            "diagnosis": top_disease_uz,
+            "diagnosis_eng": top_disease_eng,
+            "probability": prob_percentage,
+            "original_image": f"/uploads/{image_filename}",
+            "heatmap_image": f"/uploads/{heatmap_filename}",
+            "status": "Ko'rik kutilmoqda",
+            "approved_by": None,
+            "approved_time": None,
+            "raw_scores": raw_predictions,
+            "findings": findings,
+            "scans": [new_scan]
+        }
+
+        PATIENTS_DATABASE[pid] = patient_record
+        return patient_record
 
 
 @app.get("/api/gradcam/{patient_id}/{disease}")
@@ -469,9 +614,15 @@ async def approve_report(patient_id: str, req: ApproveRequest):
         raise HTTPException(status_code=404, detail="Bemor topilmadi")
 
     patient = PATIENTS_DATABASE[patient_id]
+    app_time = datetime.datetime.now().strftime("Bugun, %H:%M")
     patient["status"] = "Tasdiqlangan"
     patient["approved_by"] = req.doctor_name
-    patient["approved_time"] = datetime.datetime.now().strftime("Bugun, %H:%M")
+    patient["approved_time"] = app_time
+
+    if "scans" in patient and patient["scans"]:
+        patient["scans"][-1]["status"] = "Tasdiqlangan"
+        patient["scans"][-1]["approved_by"] = req.doctor_name
+        patient["scans"][-1]["approved_time"] = app_time
 
     PATIENTS_DATABASE[patient_id] = patient
     return patient

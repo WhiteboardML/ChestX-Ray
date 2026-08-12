@@ -20,7 +20,8 @@ export default function ArchiveView({ patients, onSelectPatient }) {
               <th className="p-5">ID</th>
               <th className="p-5">Bemor ismi</th>
               <th className="p-5">Yoshi / Jinsi</th>
-              <th className="p-5">Tashxis</th>
+              <th className="p-5">Tahlillar soni</th>
+              <th className="p-5">Oxirgi Tashxis</th>
               <th className="p-5">Ishonchli darajasi</th>
               <th className="p-5">Holati</th>
               <th className="p-5">Harakatlar</th>
@@ -38,6 +39,8 @@ export default function ArchiveView({ patients, onSelectPatient }) {
                   ? 'bg-success/10 text-success'
                   : 'bg-error/10 text-error';
 
+                const scanCount = pat.scans ? pat.scans.length : 1;
+
                 return (
                   <tr 
                     key={pat.id} 
@@ -47,6 +50,11 @@ export default function ArchiveView({ patients, onSelectPatient }) {
                     <td className="p-5 font-mono text-xs font-semibold text-primary">{pat.id}</td>
                     <td className="p-5 font-semibold text-on-surface">{pat.name}</td>
                     <td className="p-5 text-on-surface-variant font-medium">{pat.age} yosh / {pat.gender}</td>
+                    <td className="p-5">
+                      <span className="px-2.5 py-1 rounded-full text-xs font-bold bg-primary/10 text-primary border border-primary/20">
+                        {scanCount} ta rentgen
+                      </span>
+                    </td>
                     <td className="p-5">
                       <span className={`px-2.5 py-1 rounded-full text-xs font-semibold ${diagClass}`}>
                         {pat.diagnosis}
@@ -66,7 +74,7 @@ export default function ArchiveView({ patients, onSelectPatient }) {
                         }}
                         className="px-3 py-1.5 bg-primary text-white rounded-lg text-xs font-semibold hover:bg-primary-container transition-all cursor-pointer"
                       >
-                        Ko'rish
+                        Bemor Kartochkasi
                       </button>
                     </td>
                   </tr>
@@ -74,7 +82,7 @@ export default function ArchiveView({ patients, onSelectPatient }) {
               })
             ) : (
               <tr>
-                <td colSpan="7" className="p-5 text-center text-on-surface-variant font-medium">
+                <td colSpan="8" className="p-5 text-center text-on-surface-variant font-medium">
                   Hozircha tahlil natijalari mavjud emas.
                 </td>
               </tr>

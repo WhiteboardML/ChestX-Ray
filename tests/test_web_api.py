@@ -66,3 +66,24 @@ def test_api_chat(client):
     data = res_chat.json()
     assert "message" in data
     assert "Paratsetamol" in data["message"] or "harorati" in data["message"]
+
+
+def test_patient_search_and_multiscan_upload(client):
+    """Test GET /api/patients/search and POST /api/upload with existing_patient_id."""
+    res_search = client.get("/api/patients/search?q=Azizov")
+    assert res_search.status_code == 200
+    results = res_search.json()
+    assert len(results) >= 1
+    assert results[0]["id"] == "MX-8924"
+
+    # Upload new scan for existing patient MX-8924
+    img_bytes = create_dummy_image_bytes(mode="L", size=(256, 256), fmt="PNG")
+    files = {"file": ("followup_xray.png", img_bytes, "image/png")}
+    data = {"existing_patient_id": "MX-8924"}
+
+    res_upload = client.post("/api/upload", files=files, data=data)
+    assert res_upload.status_code == 200
+    p_data = res_upload.json()
+    assert p_data["id"] == "MX-8924"
+    assert len(p_data["scans"]) >= 3
+
