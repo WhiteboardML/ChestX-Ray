@@ -19,6 +19,13 @@ The system includes authentication. When the application starts up, the database
 
 ---
 
+## 📊 Project Presentation (PowerPoint)
+
+The official presentation deck for the Navoi AI Hackathon is available in the repository:
+- 📁 **[AvicennaX Presentation Deck (PPTX)](AvicennaX_Presentation.pptx)** (`AvicennaX_Presentation.pptx` — 11.08 MB)
+
+---
+
 ## ⚡ Quick Start Guide (Clone & Run in 3 Minutes)
 
 ### Step 1: Clone Repository
