@@ -7,11 +7,11 @@ export default function Sidebar({ activeTab, setActiveTab, onNewAnalysis }) {
       <div className="px-6 mb-10 flex flex-col gap-1">
         <div className="flex items-center gap-3">
           <img
-            alt="MedX AI Logo"
+            alt="AvicennaX AI Logo"
             className="h-8 w-auto object-contain"
             src="https://lh3.googleusercontent.com/aida-public/AB6AXuAZJfe1V6mU89xEy10bKC7vOdfusY_alyZEfzWqFNgrcQjMwlHwMC86Lme_kE6pkOpSIMbbpIId6a_KBFCkMC6LOcXU4uy9oN55qMGGcPdPJstD3ouJ0YjmIF2HOIIAXAm3wRaRUMXzaC9ze2ZifGiBqcxmiqQ9dmbHZNB3dFMeXbDzMYY9iYVnfMOT5R4i2ZvTm_sPyCF_6cXo2HHHscp-ZDOJTlgNryKVTfBTCaC44yUbX5NgjzKHEA"
           />
-          <span className="font-geist text-2xl font-bold text-primary tracking-tight">MedX AI</span>
+          <span className="font-geist text-2xl font-bold text-primary tracking-tight">AvicennaX AI</span>
         </div>
       </div>
 

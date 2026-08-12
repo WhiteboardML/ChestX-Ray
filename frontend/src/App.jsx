@@ -95,7 +95,7 @@ export default function App() {
         <footer className="w-full bg-surface-container-low py-6 px-6 border-t border-outline-variant/20 mt-auto">
           <div className="flex items-center justify-center opacity-75">
             <span className="text-[11px] text-on-surface-variant font-medium text-center">
-              © 2026 MedX AI - Chest X-ray Diagnostic System. Barcha huquqlar himoyalangan.
+              © 2026 AvicennaX AI - Chest X-ray Diagnostic System. Barcha huquqlar himoyalangan.
             </span>
           </div>
         </footer>

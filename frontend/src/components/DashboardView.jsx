@@ -147,18 +147,6 @@ export default function DashboardView({ onUploadSuccess }) {
 
   return (
     <div className="flex-1 flex flex-col gap-6">
-      {/* Banner Title */}
-      <div className="flex items-center justify-between bg-surface-container-low px-8 py-4 rounded-3xl relative overflow-hidden">
-        <div className="absolute inset-0 bg-gradient-to-r from-primary/5 to-transparent pointer-events-none"></div>
-        <div className="flex items-center gap-4 relative z-10">
-          <span className="material-symbols-outlined text-primary text-[32px] font-light">local_hospital</span>
-          <div className="flex flex-col">
-            <span className="font-geist text-xl font-bold text-on-surface">Asosiy ish paneli</span>
-            <span className="text-xs text-on-surface-variant font-medium">Yangi rentgenogramma va patologiyani aniqlash tizimi</span>
-          </div>
-        </div>
-      </div>
-
       {/* STATE A: UPLOAD PANEL */}
       <div className="grid grid-cols-1 lg:grid-cols-12 gap-6 flex-1 items-stretch">
         {/* Left: Upload Zone */}

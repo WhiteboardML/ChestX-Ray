@@ -528,7 +528,7 @@ async def generate_pdf_report(patient_id: str):
 <body onload="window.print()">
     <div class="header">
         <div>
-            <div class="title">MedX AI - Chest X-ray Diagnostika Hisoboti</div>
+            <div class="title">AvicennaX AI - Chest X-ray Diagnostika Hisoboti</div>
             <div style="font-size: 12px; color: #64748b;">SSV AI Standardi • TorchXRayVision DenseNet-121</div>
         </div>
         <span class="badge">{patient.get('status', "Ko'rik kutilmoqda")}</span>

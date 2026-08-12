@@ -41,7 +41,7 @@ export default function GuideView() {
           <span className="material-symbols-outlined text-primary text-[32px] font-light">menu_book</span>
           <div className="flex flex-col">
             <span className="font-geist text-xl font-bold text-on-surface">Platformadan foydalanish yo'riqnomasi</span>
-            <span className="text-xs text-on-surface-variant font-medium">MedX AI diagnostika tizimi bilan ishlash bo'yicha to'liq qo'llanma</span>
+            <span className="text-xs text-on-surface-variant font-medium">AvicennaX diagnostika tizimi bilan ishlash bo'yicha to'liq qo'llanma</span>
           </div>
         </div>
       </div>
