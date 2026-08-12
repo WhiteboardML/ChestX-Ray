@@ -57,6 +57,18 @@ export default function Sidebar({ activeTab, setActiveTab, onNewAnalysis, lang =
         </button>
 
         <button
+          onClick={() => setActiveTab('tariflar')}
+          className={`w-full flex items-center px-4 py-3 rounded-xl transition-all group font-semibold text-left ${
+            activeTab === 'tariflar'
+              ? 'bg-primary-container text-on-primary-container shadow-sm'
+              : 'text-on-surface-variant hover:bg-surface-container-high hover:text-on-surface'
+          }`}
+        >
+          <span className="material-symbols-outlined mr-4 group-hover:scale-110 transition-transform">payments</span>
+          <span className="font-geist text-sm uppercase font-semibold">{t.nav_pricing}</span>
+        </button>
+
+        <button
           onClick={() => setActiveTab('yo\'riqnoma')}
           className={`w-full flex items-center px-4 py-3 rounded-xl transition-all group font-semibold text-left ${
             activeTab === 'yo\'riqnoma'

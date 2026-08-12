@@ -6,9 +6,10 @@ import ResultView from './components/ResultView';
 import ArchiveView from './components/ArchiveView';
 import GuideView from './components/GuideView';
 import PatientsView from './components/PatientsView';
+import PricingView from './components/PricingView';
 
 export default function App() {
-  const [activeTab, setActiveTab] = useState('asosiy'); // 'asosiy' | 'bemorlar' | 'arxiv' | 'yo\'riqnoma'
+  const [activeTab, setActiveTab] = useState('asosiy'); // 'asosiy' | 'bemorlar' | 'arxiv' | 'tariflar' | 'yo\'riqnoma'
   const [currentPatient, setCurrentPatient] = useState(null);
   const [patients, setPatients] = useState([]);
   const [lang, setLang] = useState('uz'); // 'uz' | 'ru' | 'en'
@@ -99,6 +100,8 @@ export default function App() {
               onRegisterNewPatient={handleRegisterNewPatient}
               lang={lang}
             />
+          ) : activeTab === 'tariflar' ? (
+            <PricingView lang={lang} />
           ) : activeTab === 'yo\'riqnoma' ? (
             <GuideView lang={lang} />
           ) : (
