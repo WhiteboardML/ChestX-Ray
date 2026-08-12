@@ -402,9 +402,9 @@ class LoginRequest(BaseModel):
     password: str
 
 class SubscribeRequest(BaseModel):
-    email: str
+    email: Optional[str] = "dr.karimov@clinic.uz"
     plan_type: str  # 'saas' | 'token' | 'university'
-    card_number: Optional[str] = "4916 9903 3783 3237"
+    card_number: Optional[str] = None
 
 
 @app.get("/api/patients/search")
@@ -456,7 +456,7 @@ async def upload_xray(
 ):
     """
     Upload X-ray image from Web UI.
-    Requires active subscription or available tokens (Receiving Card: 4916 9903 3783 3237).
+    Requires active subscription or available tokens.
     Runs TorchXRayVision DenseNet-121 inference & Grad-CAM heatmap generation.
     """
     # Verify User Subscription / Paid Access
@@ -466,7 +466,7 @@ async def upload_xray(
             if not user.is_subscribed and user.scan_tokens <= 0:
                 raise HTTPException(
                     status_code=402,
-                    detail="Rentgen tahlilidan foydalanish uchun to'lov qilinmagan. Iltimos, Tariflar bo'limidan obuna yoki token xarid qiling. Qabul qiluvchi karta: 4916 9903 3783 3237"
+                    detail="Rentgen tahlilidan foydalanish uchun to'lov qilinmagan. Iltimos, Tariflar bo'limidan obuna yoki token xarid qiling."
                 )
             if user.scan_tokens > 0 and user.plan_name.startswith("Token"):
                 user.scan_tokens -= 1
