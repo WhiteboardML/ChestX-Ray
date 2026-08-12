@@ -124,7 +124,7 @@ export default function DashboardView({ onUploadSuccess }) {
         const aiMsg = {
           id: Date.now() + 1,
           sender: 'ai',
-          name: 'SSV AI Yordamchi',
+          name: 'AvicennaX AI Yordamchi',
           text: data.message
         };
         setChatMessages((prev) => [...prev, aiMsg]);
@@ -168,7 +168,7 @@ export default function DashboardView({ onUploadSuccess }) {
               <div className="flex flex-col items-center gap-4 text-center">
                 <div className="w-16 h-16 border-4 border-primary border-t-transparent rounded-full animate-spin"></div>
                 <h3 className="font-geist text-lg font-bold text-on-surface mt-2">{uploadStatus}</h3>
-                <p className="text-xs text-on-surface-variant">SSV AI tahlil modellari hisoblamoqda.</p>
+                <p className="text-xs text-on-surface-variant">AvicennaX AI tahlil modellari hisoblamoqda.</p>
               </div>
             </div>
           ) : (
@@ -233,7 +233,7 @@ export default function DashboardView({ onUploadSuccess }) {
                 <span className="material-symbols-outlined">smart_toy</span>
               </div>
               <div className="flex flex-col">
-                <span className="text-sm font-bold text-on-surface">SSV AI Yordamchi</span>
+                <span className="text-sm font-bold text-on-surface">AvicennaX AI Yordamchi</span>
                 <span className="text-[10px] text-success uppercase font-semibold">Tibbiy maslahat • Onlayn</span>
               </div>
             </div>
@@ -264,7 +264,7 @@ export default function DashboardView({ onUploadSuccess }) {
 
               {isTyping && (
                 <div className="flex flex-col gap-1 items-start max-w-[85%]">
-                  <span className="text-[9px] text-on-surface-variant ml-2 font-semibold">SSV AI Yordamchi</span>
+                  <span className="text-[9px] text-on-surface-variant ml-2 font-semibold">AvicennaX AI Yordamchi</span>
                   <div className="bg-surface-container-low p-3 rounded-2xl rounded-tl-sm border border-outline-variant/20 shadow-sm flex items-center gap-1.5">
                     <span className="w-1.5 h-1.5 rounded-full bg-primary animate-bounce"></span>
                     <span className="w-1.5 h-1.5 rounded-full bg-primary animate-bounce" style={{ animationDelay: '0.2s' }}></span>

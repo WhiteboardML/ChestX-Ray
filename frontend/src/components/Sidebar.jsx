@@ -3,14 +3,16 @@ import React from 'react';
 export default function Sidebar({ activeTab, setActiveTab, onNewAnalysis }) {
   return (
     <aside className="fixed left-0 top-0 h-full w-[280px] bg-surface-container shadow-[2px_0_12px_rgba(0,0,0,0.02)] z-50 flex flex-col pt-6 pb-8 transition-all">
-      {/* Logo */}
-      <div className="px-6 mb-10 flex items-center gap-3">
-        <img
-          alt="MedX AI Logo"
-          className="h-8 w-auto object-contain"
-          src="https://lh3.googleusercontent.com/aida-public/AB6AXuAZJfe1V6mU89xEy10bKC7vOdfusY_alyZEfzWqFNgrcQjMwlHwMC86Lme_kE6pkOpSIMbbpIId6a_KBFCkMC6LOcXU4uy9oN55qMGGcPdPJstD3ouJ0YjmIF2HOIIAXAm3wRaRUMXzaC9ze2ZifGiBqcxmiqQ9dmbHZNB3dFMeXbDzMYY9iYVnfMOT5R4i2ZvTm_sPyCF_6cXo2HHHscp-ZDOJTlgNryKVTfBTCaC44yUbX5NgjzKHEA"
-        />
-        <span className="font-geist text-2xl font-bold text-primary tracking-tight">MedX AI</span>
+      {/* Logo and Certification */}
+      <div className="px-6 mb-10 flex flex-col gap-1">
+        <div className="flex items-center gap-3">
+          <img
+            alt="MedX AI Logo"
+            className="h-8 w-auto object-contain"
+            src="https://lh3.googleusercontent.com/aida-public/AB6AXuAZJfe1V6mU89xEy10bKC7vOdfusY_alyZEfzWqFNgrcQjMwlHwMC86Lme_kE6pkOpSIMbbpIId6a_KBFCkMC6LOcXU4uy9oN55qMGGcPdPJstD3ouJ0YjmIF2HOIIAXAm3wRaRUMXzaC9ze2ZifGiBqcxmiqQ9dmbHZNB3dFMeXbDzMYY9iYVnfMOT5R4i2ZvTm_sPyCF_6cXo2HHHscp-ZDOJTlgNryKVTfBTCaC44yUbX5NgjzKHEA"
+          />
+          <span className="font-geist text-2xl font-bold text-primary tracking-tight">MedX AI</span>
+        </div>
       </div>
 
       {/* Links */}
@@ -36,6 +38,17 @@ export default function Sidebar({ activeTab, setActiveTab, onNewAnalysis }) {
         >
           <span className="material-symbols-outlined mr-4 group-hover:scale-110 transition-transform">folder_zip</span>
           <span className="font-geist text-sm uppercase font-semibold">Arxiv</span>
+        </button>
+        <button
+          onClick={() => setActiveTab('yo\'riqnoma')}
+          className={`w-full flex items-center px-4 py-3 rounded-xl transition-all group font-semibold text-left ${
+            activeTab === 'yo\'riqnoma'
+              ? 'bg-primary-container text-on-primary-container shadow-sm'
+              : 'text-on-surface-variant hover:bg-surface-container-high hover:text-on-surface'
+          }`}
+        >
+          <span className="material-symbols-outlined mr-4 group-hover:scale-110 transition-transform">menu_book</span>
+          <span className="font-geist text-sm uppercase font-semibold">Yo'riqnoma</span>
         </button>
         <button
           onClick={() => setActiveTab('arxiv')}

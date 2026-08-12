@@ -4,6 +4,7 @@ import Header from './components/Header';
 import DashboardView from './components/DashboardView';
 import ResultView from './components/ResultView';
 import ArchiveView from './components/ArchiveView';
+import GuideView from './components/GuideView';
 
 export default function App() {
   const [activeTab, setActiveTab] = useState('asosiy'); // 'asosiy' | 'arxiv'
@@ -80,6 +81,8 @@ export default function App() {
                 onUploadSuccess={handleUploadSuccess} 
               />
             )
+          ) : activeTab === 'yo\'riqnoma' ? (
+            <GuideView />
           ) : (
             <ArchiveView
               patients={patients}
@@ -87,6 +90,15 @@ export default function App() {
             />
           )}
         </main>
+
+        {/* Safety Standard Footer */}
+        <footer className="w-full bg-surface-container-low py-6 px-6 border-t border-outline-variant/20 mt-auto">
+          <div className="flex items-center justify-center opacity-75">
+            <span className="text-[11px] text-on-surface-variant font-medium text-center">
+              © 2026 MedX AI - Chest X-ray Diagnostic System. Barcha huquqlar himoyalangan.
+            </span>
+          </div>
+        </footer>
       </div>
     </div>
   );

@@ -26,7 +26,7 @@ const getUzName = (name) => diseaseUzMap[name] || name;
 export default function ResultView({ patient, onApproveSuccess }) {
   const [opacity, setOpacity] = useState(80);
   const [heatmapVisible, setHeatmapVisible] = useState(true);
-  const [activeSegmentTab, setActiveSegmentTab] = useState('simple'); // 'simple' | 'technical' | 'raw_scores'
+  const [activeSegmentTab, setActiveSegmentTab] = useState('simple'); // 'simple' | 'raw_scores' | 'technical'
   const [selectedDisease, setSelectedDisease] = useState(patient?.diagnosis || '');
   const [activeHeatmapUrl, setActiveHeatmapUrl] = useState(patient?.heatmap_image || '');
   const [loadingHeatmap, setLoadingHeatmap] = useState(false);
@@ -45,7 +45,7 @@ export default function ResultView({ patient, onApproveSuccess }) {
           id: 1,
           sender: 'ai',
           name: 'SSV AI Yordamchi',
-          text: `Tahlil yakunlandi! TorchXRayVision DenseNet-121 modeli orqali ${patient.diagnosis} (${patient.probability}%) aniqlanmoqda. Pastdagi ro'yxatdan boshqa patologiyalarni tanlab, Grad-CAM xaritasini o'zgartirishingiz mumkin.`
+          text: `Tahlil yakunlandi! Bemor uchun ${patient.diagnosis} (${patient.probability}%) aniqlanmoqda. SSV davolash bayonnomalari va dori dozalari haqida maslahatlar bera olaman.`
         }
       ]);
     }
@@ -287,59 +287,59 @@ export default function ResultView({ patient, onApproveSuccess }) {
             </div>
           </div>
 
-          {/* TorchXRayVision 18 Pathology Breakdown Grid */}
-          <div className="bg-surface-container-lowest rounded-3xl p-6 shadow-sm border border-outline-variant/20 relative">
+          {/* Diagnostic Details Area */}
+          <div className="bg-surface-container-lowest rounded-3xl p-6 shadow-sm border border-outline-variant/20 relative overflow-hidden">
             <div className="flex items-center justify-between border-b border-surface-container-high pb-4 mb-4">
               <div className="flex items-center gap-3">
-                <div className="w-10 h-10 rounded-full bg-primary/15 flex items-center justify-center text-primary">
-                  <span className="material-symbols-outlined">analytics</span>
+                <div className="w-10 h-10 rounded-full bg-secondary/15 flex items-center justify-center text-secondary">
+                  <span className="material-symbols-outlined">stethoscope</span>
                 </div>
-                <div>
-                  <h3 className="text-base font-bold text-on-surface">TorchXRayVision 18 ta Patologiya Tahlili</h3>
-                  <p className="text-[11px] text-on-surface-variant font-medium">Boshqa patologiyani bosing va uning Grad-CAM xaritasini ko'ring</p>
-                </div>
+                <h3 className="text-base font-bold text-on-surface">Tashxis Xulosalari</h3>
               </div>
-
+              
               {/* Segmented Tab */}
               <div className="flex bg-surface-container-low p-1 rounded-xl border border-outline-variant/50">
                 <button
                   onClick={() => setActiveSegmentTab('simple')}
                   className={`px-3 py-1.5 rounded-lg text-xs font-bold transition-all cursor-pointer ${
                     activeSegmentTab === 'simple'
-                      ? 'bg-white shadow-sm text-primary'
+                      ? 'bg-white shadow-sm text-primary font-bold'
                       : 'text-on-surface-variant hover:text-on-surface'
                   }`}
                 >
-                  Sodda Xulosa
+                  Sodda xulosa
                 </button>
-                <button
-                  onClick={() => setActiveSegmentTab('raw_scores')}
-                  className={`px-3 py-1.5 rounded-lg text-xs font-bold transition-all cursor-pointer ${
-                    activeSegmentTab === 'raw_scores'
-                      ? 'bg-white shadow-sm text-primary'
-                      : 'text-on-surface-variant hover:text-on-surface'
-                  }`}
-                >
-                  Raw Model Score'lar ({rawScores.length})
-                </button>
+                {rawScores.length > 0 && (
+                  <button
+                    onClick={() => setActiveSegmentTab('raw_scores')}
+                    className={`px-3 py-1.5 rounded-lg text-xs font-bold transition-all cursor-pointer ${
+                      activeSegmentTab === 'raw_scores'
+                        ? 'bg-white shadow-sm text-primary font-bold'
+                        : 'text-on-surface-variant hover:text-on-surface'
+                    }`}
+                  >
+                    Raw Model Score'lar ({rawScores.length})
+                  </button>
+                )}
                 <button
                   onClick={() => setActiveSegmentTab('technical')}
                   className={`px-3 py-1.5 rounded-lg text-xs font-bold transition-all cursor-pointer ${
                     activeSegmentTab === 'technical'
-                      ? 'bg-white shadow-sm text-primary'
+                      ? 'bg-white shadow-sm text-primary font-bold'
                       : 'text-on-surface-variant hover:text-on-surface'
                   }`}
                 >
-                  Texnik Hisobot
+                  Rentgenologik hisobot (Texnik)
                 </button>
               </div>
             </div>
 
+            {/* TAB CONTENT: Raw Scores Interactive Selector */}
             {activeSegmentTab === 'raw_scores' && (
               <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-3">
                 {rawScores.map((item, idx) => {
                   const isSelected = selectedDisease === item.disease || selectedDisease === item.disease_uz;
-                  const pct = Math.min(Math.max(roundScore(item.score), 0), 100);
+                  const pct = Math.min(Math.max(Math.round(item.score * 100), 0), 100);
                   const nameUz = item.disease_uz || getUzName(item.disease);
                   return (
                     <button
@@ -542,9 +542,4 @@ export default function ResultView({ patient, onApproveSuccess }) {
       </div>
     </div>
   );
-}
-
-function roundScore(val) {
-  if (typeof val !== 'number') return 0;
-  return Math.round(val * 100);
 }
