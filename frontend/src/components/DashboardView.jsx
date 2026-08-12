@@ -211,8 +211,8 @@ export default function DashboardView({ onUploadSuccess, lang = 'uz' }) {
                   <span className="material-symbols-outlined">badge</span>
                 </div>
                 <div>
-                  <h3 className="font-geist text-lg font-bold text-on-surface">Bemor Kartochkasi Ma'lumotlari</h3>
-                  <p className="text-xs text-on-surface-variant">Rentgen tahlilini bemor tarixiga biriktiring</p>
+                  <h3 className="font-geist text-lg font-bold text-on-surface">{t.modal_card_title}</h3>
+                  <p className="text-xs text-on-surface-variant">{t.modal_card_subtitle}</p>
                 </div>
               </div>
               <button 
@@ -228,7 +228,7 @@ export default function DashboardView({ onUploadSuccess, lang = 'uz' }) {
               <div className="p-4 bg-primary/5 border border-primary/20 rounded-2xl flex flex-col gap-3">
                 <span className="text-xs font-bold text-primary flex items-center gap-1.5">
                   <span className="material-symbols-outlined text-[18px]">find_replace</span>
-                  Tizimda mos bemorlar topildi ({searchResults.length} ta):
+                  {t.modal_match_found} ({searchResults.length}):
                 </span>
 
                 <div className="space-y-2 max-h-40 overflow-y-auto">
@@ -245,9 +245,9 @@ export default function DashboardView({ onUploadSuccess, lang = 'uz' }) {
                         }`}
                       >
                         <div className="flex flex-col">
-                          <span className="text-xs font-bold">{pat.name} ({pat.age} yosh, {pat.gender})</span>
+                          <span className="text-xs font-bold">{pat.name} ({pat.age}, {pat.gender})</span>
                           <span className={`text-[10px] ${isSelected ? 'text-white/80' : 'text-on-surface-variant'}`}>
-                            ID: {pat.id} • {pat.scan_count} ta oldingi rentgen tahlili • Oxirgi: {pat.last_diagnosis}
+                            ID: {pat.id} • {pat.scan_count} • {pat.last_diagnosis}
                           </span>
                         </div>
                         <span className="material-symbols-outlined text-[20px]">
@@ -259,13 +259,13 @@ export default function DashboardView({ onUploadSuccess, lang = 'uz' }) {
                 </div>
 
                 <div className="flex items-center justify-between text-[11px] pt-1 text-on-surface-variant font-medium">
-                  <span>Mavjud kartochkani tanlaysizmi yoki yangi yaratasizmi?</span>
+                  <span>{t.modal_ask_select_existing}</span>
                   {selectedPatientId && (
                     <button 
                       onClick={() => setSelectedPatientId(null)}
                       className="text-primary font-bold hover:underline"
                     >
-                      Yangi bemor sifatida yaratish
+                      {t.modal_create_new}
                     </button>
                   )}
                 </div>
@@ -276,22 +276,22 @@ export default function DashboardView({ onUploadSuccess, lang = 'uz' }) {
             <div className={`space-y-4 transition-opacity ${selectedPatientId ? 'opacity-50 pointer-events-none' : ''}`}>
               <div className="grid grid-cols-2 gap-4">
                 <div>
-                  <label className="text-xs font-bold text-on-surface-variant mb-1 block">Familiya</label>
+                  <label className="text-xs font-bold text-on-surface-variant mb-1 block">{t.label_last_name}</label>
                   <input
                     type="text"
                     value={lastName}
                     onChange={(e) => setLastName(e.target.value)}
-                    placeholder="Masalan: Azizov"
+                    placeholder={t.placeholder_last_name}
                     className="w-full bg-surface-container-low border border-outline-variant/40 rounded-xl px-3.5 py-2.5 text-xs focus:ring-2 focus:ring-primary/20 outline-none text-on-surface"
                   />
                 </div>
                 <div>
-                  <label className="text-xs font-bold text-on-surface-variant mb-1 block">Ism</label>
+                  <label className="text-xs font-bold text-on-surface-variant mb-1 block">{t.label_first_name}</label>
                   <input
                     type="text"
                     value={firstName}
                     onChange={(e) => setFirstName(e.target.value)}
-                    placeholder="Masalan: Bekzod"
+                    placeholder={t.placeholder_first_name}
                     className="w-full bg-surface-container-low border border-outline-variant/40 rounded-xl px-3.5 py-2.5 text-xs focus:ring-2 focus:ring-primary/20 outline-none text-on-surface"
                   />
                 </div>
@@ -299,7 +299,7 @@ export default function DashboardView({ onUploadSuccess, lang = 'uz' }) {
 
               <div className="grid grid-cols-2 gap-4">
                 <div>
-                  <label className="text-xs font-bold text-on-surface-variant mb-1 block">Yosh</label>
+                  <label className="text-xs font-bold text-on-surface-variant mb-1 block">{t.label_age}</label>
                   <input
                     type="number"
                     value={age}
@@ -308,14 +308,14 @@ export default function DashboardView({ onUploadSuccess, lang = 'uz' }) {
                   />
                 </div>
                 <div>
-                  <label className="text-xs font-bold text-on-surface-variant mb-1 block">Jinsi</label>
+                  <label className="text-xs font-bold text-on-surface-variant mb-1 block">{t.label_gender}</label>
                   <select
                     value={gender}
                     onChange={(e) => setGender(e.target.value)}
                     className="w-full bg-surface-container-low border border-outline-variant/40 rounded-xl px-3.5 py-2.5 text-xs focus:ring-2 focus:ring-primary/20 outline-none text-on-surface cursor-pointer"
                   >
-                    <option value="Erkak">Erkak</option>
-                    <option value="Ayol">Ayol</option>
+                    <option value="Erkak">{t.gender_male}</option>
+                    <option value="Ayol">{t.gender_female}</option>
                   </select>
                 </div>
               </div>
@@ -327,14 +327,14 @@ export default function DashboardView({ onUploadSuccess, lang = 'uz' }) {
                 onClick={() => setShowModal(false)}
                 className="px-5 py-2.5 bg-surface-container-high text-on-surface rounded-xl text-xs font-bold hover:bg-surface-container transition-all cursor-pointer"
               >
-                Bekor qilish
+                {t.btn_cancel}
               </button>
               <button
                 type="button"
                 onClick={startAnalysis}
                 className="px-6 py-2.5 bg-primary text-white rounded-xl text-xs font-bold hover:bg-primary-container transition-all shadow-md flex items-center gap-2 cursor-pointer"
               >
-                <span className="material-symbols-outlined text-[18px]">psychology</span> Tahlilni Boshlash
+                <span className="material-symbols-outlined text-[18px]">psychology</span> {t.btn_start_analysis}
               </button>
             </div>
           </div>
@@ -350,7 +350,7 @@ export default function DashboardView({ onUploadSuccess, lang = 'uz' }) {
               <div className="flex flex-col items-center gap-4 text-center">
                 <div className="w-16 h-16 border-4 border-primary border-t-transparent rounded-full animate-spin"></div>
                 <h3 className="font-geist text-lg font-bold text-on-surface mt-2">{uploadStatus}</h3>
-                <p className="text-xs text-on-surface-variant">AvicennaX AI tahlil modellari hisoblamoqda.</p>
+                <p className="text-xs text-on-surface-variant">{t.dash_ai_calculating}</p>
               </div>
             </div>
           ) : (
@@ -373,9 +373,9 @@ export default function DashboardView({ onUploadSuccess, lang = 'uz' }) {
                     cloud_upload
                   </span>
                 </div>
-                <h2 className="font-geist text-2xl font-bold text-on-surface mb-3">O'pka rentgen suratini bu yerga tashlang</h2>
+                <h2 className="font-geist text-2xl font-bold text-on-surface mb-3">{t.dash_dropzone_title}</h2>
                 <p className="text-sm text-on-surface-variant mb-8 leading-relaxed">
-                  yoki kompyuter o'zidan tanlang. PNG, JPG, DICOM (.dcm) va PDF (.pdf) formatlari qo'llab-quvvatlanadi.
+                  {t.dash_dropzone_desc}
                 </p>
 
                 <button
@@ -386,7 +386,7 @@ export default function DashboardView({ onUploadSuccess, lang = 'uz' }) {
                   }}
                   className="bg-primary text-white text-sm font-semibold px-8 py-3.5 rounded-full flex items-center gap-3 hover:bg-primary-container transition-all shadow-md cursor-pointer"
                 >
-                  <span className="material-symbols-outlined text-[18px]">upload</span> Kompyuterdan tanlash
+                  <span className="material-symbols-outlined text-[18px]">upload</span> {t.dash_btn_select_file}
                 </button>
                 <input
                   ref={fileInputRef}
@@ -399,7 +399,7 @@ export default function DashboardView({ onUploadSuccess, lang = 'uz' }) {
 
                 <div className="flex items-center gap-2 text-on-surface-variant/70 mt-10">
                   <span className="material-symbols-outlined text-[16px]">lock</span>
-                  <span className="text-[11px] font-medium tracking-wide">Bemor ma'lumotlari HIPAA standarti asosida shifrlangan.</span>
+                  <span className="text-[11px] font-medium tracking-wide">{t.dash_privacy_notice}</span>
                 </div>
               </div>
             </div>
@@ -415,8 +415,8 @@ export default function DashboardView({ onUploadSuccess, lang = 'uz' }) {
                 <span className="material-symbols-outlined">smart_toy</span>
               </div>
               <div className="flex flex-col">
-                <span className="text-sm font-bold text-on-surface">SSV AI Yordamchi</span>
-                <span className="text-[10px] text-success uppercase font-semibold">Tibbiy maslahat • Onlayn</span>
+                <span className="text-sm font-bold text-on-surface">{t.chat_assistant_name}</span>
+                <span className="text-[10px] text-success uppercase font-semibold">{t.chat_status_online}</span>
               </div>
             </div>
 
@@ -446,7 +446,7 @@ export default function DashboardView({ onUploadSuccess, lang = 'uz' }) {
 
               {isTyping && (
                 <div className="flex flex-col gap-1 items-start max-w-[85%]">
-                  <span className="text-[9px] text-on-surface-variant ml-2 font-semibold font-geist">SSV AI Yordamchi</span>
+                  <span className="text-[9px] text-on-surface-variant ml-2 font-semibold font-geist">{t.chat_assistant_name}</span>
                   <div className="bg-surface-container-low p-3 rounded-2xl rounded-tl-sm border border-outline-variant/20 shadow-sm flex items-center gap-1.5">
                     <span className="w-1.5 h-1.5 rounded-full bg-primary animate-bounce"></span>
                     <span className="w-1.5 h-1.5 rounded-full bg-primary animate-bounce" style={{ animationDelay: '0.2s' }}></span>
@@ -466,7 +466,7 @@ export default function DashboardView({ onUploadSuccess, lang = 'uz' }) {
                     value={chatInput}
                     onChange={(e) => setChatInput(e.target.value)}
                     className="w-full bg-surface-container-high border-none rounded-full py-3.5 pl-4 pr-10 text-xs focus:ring-2 focus:ring-primary/20 outline-none placeholder:text-on-surface-variant/40"
-                    placeholder="Simptom yoki savol yozing..."
+                    placeholder={t.chat_placeholder}
                     type="text"
                     disabled={isUploading}
                   />

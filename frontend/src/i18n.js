@@ -5,24 +5,41 @@
 export const translations = {
   uz: {
     // Navigation
-    nav_dashboard: "Boshqaruv Paneli",
+    nav_dashboard: "Asosiy Panel",
     nav_patients: "Bemorlar",
-    nav_archive: "Rentgen Arxivi",
-    nav_analytics: "Analitika & Model",
+    nav_archive: "Arxiv",
+    nav_analytics: "Yo'riqnoma",
     nav_settings: "Sozlamalar",
-    nav_new_analysis: "Yangi Tahlil Upload",
+    nav_new_analysis: "Yangi tahlil",
 
-    // Header & User
+    // Header & System
     doctor_title: "Bosh Radiolog-Pulmonolog",
-    system_status: "AI Tizim Tayyor",
+    system_status: "Yangi rentgenogramma va patologiyani aniqlash tizimi",
 
-    // Dashboard View
-    dash_title: "AvicennaX Radiologik Tahlil Paneli",
-    dash_subtitle: "Sun'iy intellekt asosida ko'krak qafasi rentgenogrammalarini tezkor diagnostika qilish va klinik dinamikani tahlil qilish",
-    stats_total_scans: "Jami Rentgen Tahlillari",
-    stats_pathologies: "Aniqlangan Patologiyalar",
-    stats_accuracy: "Model Aniqligi (DenseNet-121)",
-    stats_avg_time: "O'rtacha Tahlil Vaqti",
+    // Dashboard & Upload
+    dash_title: "Asosiy ish paneli",
+    dash_dropzone_title: "O'pka rentgen suratini bu yerga tashlang",
+    dash_dropzone_desc: "yoki kompyuter o'zidan tanlang. PNG, JPG, DICOM (.dcm) va PDF (.pdf) formatlari qo'llab-quvvatlanadi.",
+    dash_btn_select_file: "Kompyuterdan tanlash",
+    dash_privacy_notice: "Bemor ma'lumotlari HIPAA standarti asosida shifrlangan.",
+    dash_ai_calculating: "AvicennaX AI tahlil modellari hisoblamoqda.",
+    
+    // Patient Match Modal
+    modal_card_title: "Bemor Kartochkasi Ma'lumotlari",
+    modal_card_subtitle: "Rentgen tahlilini bemor tarixiga biriktiring",
+    modal_match_found: "Tizimda mos bemorlar topildi",
+    modal_create_new: "Yangi bemor sifatida yaratish",
+    modal_ask_select_existing: "Mavjud kartochkani tanlaysizmi yoki yangi yaratasizmi?",
+    label_last_name: "Familiya",
+    label_first_name: "Ism",
+    label_age: "Yosh",
+    label_gender: "Jinsi",
+    gender_male: "Erkak",
+    gender_female: "Ayol",
+    btn_cancel: "Bekor qilish",
+    btn_start_analysis: "Tahlilni Boshlash",
+    placeholder_last_name: "Masalan: Azizov",
+    placeholder_first_name: "Masalan: Bekzod",
 
     // Patient Directory (Bemorlar)
     patients_title: "Bemorlar Katalogi va Shaxsiy Kartochkalar",
@@ -31,6 +48,9 @@ export const translations = {
     search_patients_placeholder: "Bemor ismi, ID yoki telefon raqami bo'yicha qidiruv...",
     card_view_history: "Klinik Tarix va Rentgenogrammalar",
     card_new_scan: "Yangi Rentgen Yuklash",
+    patient_status_monitoring: "Nazoratda",
+    patient_status_hospitalized: "Statsionar",
+    patient_status_discharged: "Chiqarilgan",
 
     // Scan Archive (Arxiv)
     archive_title: "Rentgenogrammalar Arxivi va Repozitoriysi",
@@ -44,6 +64,8 @@ export const translations = {
     table_status: "Holati",
     table_actions: "Harakatlar",
     btn_details: "Tafsilotlar",
+    status_approved: "Tasdiqlangan",
+    status_pending: "Ko'rik kutilmoqda",
 
     // Result / Diagnostic View
     result_title: "Rentgenogramma Tahlili va Grad-CAM Vizualizatsiyasi",
@@ -59,42 +81,64 @@ export const translations = {
     tab_technical: "Rentgenologik hisobot (Texnik)",
     btn_approve: "Hisobotni Tasdiqlash",
     btn_print_pdf: "Chop Etish / PDF",
+    label_opacity: "Qatlam Shaffofligi",
 
     // Modals & Chat
     modal_register_title: "Yangi Bemor Ro'yxatdan O'tkazish",
-    chat_title: "AI Pulmonolog Yordamchi",
-    chat_placeholder: "Tashxis yoki davolash bo'yicha savolingizni yozing...",
+    chat_assistant_name: "SSV AI Yordamchi",
+    chat_status_online: "Tibbiy maslahat • Onlayn",
+    chat_placeholder: "Simptom yoki savol yozing...",
     btn_send: "Yuborish"
   },
 
   ru: {
     // Navigation
-    nav_dashboard: "Панель управления",
+    nav_dashboard: "Главная Панель",
     nav_patients: "Пациенты",
     nav_archive: "Архив снимков",
-    nav_analytics: "Аналитика и Модель",
+    nav_analytics: "Инструкция",
     nav_settings: "Настройки",
-    nav_new_analysis: "Загрузить рентген",
+    nav_new_analysis: "Новый анализ",
 
-    // Header & User
+    // Header & System
     doctor_title: "Главный Радиолог-Пульмонолог",
-    system_status: "ИИ Система Готова",
+    system_status: "Система распознавания рентгенограмм и патологий",
 
-    // Dashboard View
-    dash_title: "Панель Радиологического Анализа AvicennaX",
-    dash_subtitle: "Экспресс-диагностика рентгенограмм грудной клетки и анализ клинической динамики на основе ИИ",
-    stats_total_scans: "Всего анализов рентгена",
-    stats_pathologies: "Выявленные патологии",
-    stats_accuracy: "Точность модели (DenseNet-121)",
-    stats_avg_time: "Среднее время анализа",
+    // Dashboard & Upload
+    dash_title: "Главная рабочая панель",
+    dash_dropzone_title: "Перетащите рентгеновский снимок сюда",
+    dash_dropzone_desc: "или выберите с компьютера. Поддерживаются форматы PNG, JPG, DICOM (.dcm) и PDF (.pdf).",
+    dash_btn_select_file: "Выбрать с компьютера",
+    dash_privacy_notice: "Данные пациентов зашифрованы по стандарту HIPAA.",
+    dash_ai_calculating: "Модели ИИ AvicennaX выполняют вычисления.",
+
+    // Patient Match Modal
+    modal_card_title: "Данные карточки пациента",
+    modal_card_subtitle: "Привяжите рентгенологический анализ к истории пациента",
+    modal_match_found: "В системе найдены совпадающие пациенты",
+    modal_create_new: "Создать как нового пациента",
+    modal_ask_select_existing: "Выберите существующую карту или создайте новую?",
+    label_last_name: "Фамилия",
+    label_first_name: "Имя",
+    label_age: "Возраст",
+    label_gender: "Пол",
+    gender_male: "Мужской",
+    gender_female: "Женский",
+    btn_cancel: "Отмена",
+    btn_start_analysis: "Начать Анализ",
+    placeholder_last_name: "Например: Азизов",
+    placeholder_first_name: "Например: Бекзод",
 
     // Patient Directory (Bemorlar)
     patients_title: "Каталог пациентов и медицинские карты",
     patients_subtitle: "Динамика рентгенограмм и клиническая история по каждому пациенту",
     btn_register_patient: "Зарегистрировать пациента",
     search_patients_placeholder: "Поиск по имени пациента, ID или телефону...",
-    card_view_history: "История и рентгенограммы",
+    card_view_history: "История и снимки",
     card_new_scan: "Загрузить новый снимок",
+    patient_status_monitoring: "На наблюдении",
+    patient_status_hospitalized: "Стационар",
+    patient_status_discharged: "Выписан",
 
     // Scan Archive (Arxiv)
     archive_title: "Архив и репозиторий рентгенограмм",
@@ -108,6 +152,8 @@ export const translations = {
     table_status: "Статус",
     table_actions: "Действия",
     btn_details: "Подробнее",
+    status_approved: "Утверждено",
+    status_pending: "Ожидает осмотра",
 
     // Result / Diagnostic View
     result_title: "Анализ рентгенограммы и Grad-CAM Визуализация",
@@ -123,11 +169,13 @@ export const translations = {
     tab_technical: "Радиологический отчет (Технический)",
     btn_approve: "Утвердить отчет",
     btn_print_pdf: "Печать / PDF",
+    label_opacity: "Прозрачность слоя",
 
     // Modals & Chat
     modal_register_title: "Регистрация нового пациента",
-    chat_title: "ИИ Ассистент Пульмонолога",
-    chat_placeholder: "Задайте вопрос по диагнозу или протоколу лечения...",
+    chat_assistant_name: "ИИ Ассистент Минздрава",
+    chat_status_online: "Медицинская консультация • Онлайн",
+    chat_placeholder: "Введите симптом или вопрос...",
     btn_send: "Отправить"
   },
 
@@ -135,32 +183,52 @@ export const translations = {
     // Navigation
     nav_dashboard: "Dashboard",
     nav_patients: "Patients",
-    nav_archive: "Scan Archive",
-    nav_analytics: "Analytics & Model",
+    nav_archive: "Archive",
+    nav_analytics: "Guide",
     nav_settings: "Settings",
-    nav_new_analysis: "Upload Scan",
+    nav_new_analysis: "New Analysis",
 
-    // Header & User
+    // Header & System
     doctor_title: "Chief Radiologist-Pulmonologist",
-    system_status: "AI System Ready",
+    system_status: "Chest X-ray and Pathology Recognition System",
 
-    // Dashboard View
-    dash_title: "AvicennaX Radiological Analysis Dashboard",
-    dash_subtitle: "AI-powered rapid chest X-ray diagnostics and clinical evolution monitoring",
-    stats_total_scans: "Total X-ray Analyses",
-    stats_pathologies: "Pathologies Detected",
-    stats_accuracy: "Model Accuracy (DenseNet-121)",
-    stats_avg_time: "Avg Analysis Time",
+    // Dashboard & Upload
+    dash_title: "Main Workspace Panel",
+    dash_dropzone_title: "Drag and drop chest X-ray image here",
+    dash_dropzone_desc: "or choose from your computer. Formats supported: PNG, JPG, DICOM (.dcm), and PDF (.pdf).",
+    dash_btn_select_file: "Select from Computer",
+    dash_privacy_notice: "Patient data is encrypted under HIPAA standards.",
+    dash_ai_calculating: "AvicennaX AI inference models are processing.",
 
-    // Patient Directory
+    // Patient Match Modal
+    modal_card_title: "Patient Demographic Information",
+    modal_card_subtitle: "Attach X-ray analysis to existing patient timeline",
+    modal_match_found: "Matching patients found in system",
+    modal_create_new: "Create as new patient",
+    modal_ask_select_existing: "Select an existing card or register new?",
+    label_last_name: "Last Name",
+    label_first_name: "First Name",
+    label_age: "Age",
+    label_gender: "Gender",
+    gender_male: "Male",
+    gender_female: "Female",
+    btn_cancel: "Cancel",
+    btn_start_analysis: "Start Analysis",
+    placeholder_last_name: "Example: Azizov",
+    placeholder_first_name: "Example: Bekzod",
+
+    // Patient Directory (Bemorlar)
     patients_title: "Patient Directory & Medical Cards",
-    patients_subtitle: "Clinical timeline history and longitudinal X-ray progression per patient",
+    patients_subtitle: "Longitudinal X-ray timeline progression and clinical history per patient",
     btn_register_patient: "Register New Patient",
     search_patients_placeholder: "Search by patient name, ID, or phone number...",
     card_view_history: "Clinical History & Scans",
     card_new_scan: "Upload New Scan",
+    patient_status_monitoring: "Outpatient",
+    patient_status_hospitalized: "Inpatient",
+    patient_status_discharged: "Discharged",
 
-    // Scan Archive
+    // Scan Archive (Arxiv)
     archive_title: "X-ray Scan Archive Repository",
     archive_subtitle: "Chronological repository log of all registered X-ray scans (newest date first)",
     table_date: "Date & Time",
@@ -172,6 +240,8 @@ export const translations = {
     table_status: "Status",
     table_actions: "Actions",
     btn_details: "View Details",
+    status_approved: "Approved",
+    status_pending: "Pending Review",
 
     // Result / Diagnostic View
     result_title: "X-ray Analysis & Grad-CAM Heatmap Visualization",
@@ -187,11 +257,13 @@ export const translations = {
     tab_technical: "Radiological Report (Technical)",
     btn_approve: "Approve Report",
     btn_print_pdf: "Print / PDF Report",
+    label_opacity: "Overlay Opacity",
 
     // Modals & Chat
     modal_register_title: "Register New Patient Profile",
-    chat_title: "AI Pulmonologist Assistant",
-    chat_placeholder: "Ask a medical question regarding diagnosis or treatment...",
+    chat_assistant_name: "MOH AI Assistant",
+    chat_status_online: "Medical Advice • Online",
+    chat_placeholder: "Type symptom or question...",
     btn_send: "Send"
   }
 };

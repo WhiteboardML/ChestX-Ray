@@ -94,7 +94,7 @@ export default function ArchiveView({ onSelectPatient, lang = 'uz' }) {
             className="px-4 py-2 bg-surface-container-high hover:bg-surface-container-highest text-on-surface rounded-2xl text-xs font-bold flex items-center gap-2 transition-all cursor-pointer"
           >
             <span className="material-symbols-outlined text-lg">refresh</span>
-            Yangilash
+            {t.action_refresh}
           </button>
         </div>
       </div>
@@ -106,7 +106,7 @@ export default function ArchiveView({ onSelectPatient, lang = 'uz' }) {
             <span className="material-symbols-outlined">folder_zip</span>
           </div>
           <div>
-            <div className="text-xs text-on-surface-variant font-medium">Jami Rentgenlar</div>
+            <div className="text-xs text-on-surface-variant font-medium">{t.stats_total_scans}</div>
             <div className="font-geist font-bold text-xl text-on-surface">{totalScans} ta</div>
           </div>
         </div>
@@ -116,7 +116,7 @@ export default function ArchiveView({ onSelectPatient, lang = 'uz' }) {
             <span className="material-symbols-outlined">verified</span>
           </div>
           <div>
-            <div className="text-xs text-on-surface-variant font-medium">Tasdiqlangan Hisobotlar</div>
+            <div className="text-xs text-on-surface-variant font-medium">{t.status_approved}</div>
             <div className="font-geist font-bold text-xl text-success">{approvedScans} ta</div>
           </div>
         </div>
@@ -126,7 +126,7 @@ export default function ArchiveView({ onSelectPatient, lang = 'uz' }) {
             <span className="material-symbols-outlined">radiology</span>
           </div>
           <div>
-            <div className="text-xs text-on-surface-variant font-medium">Patologiyalar</div>
+            <div className="text-xs text-on-surface-variant font-medium">{t.stats_pathologies}</div>
             <div className="font-geist font-bold text-xl text-error">{pathologyScans} holat</div>
           </div>
         </div>
@@ -136,7 +136,7 @@ export default function ArchiveView({ onSelectPatient, lang = 'uz' }) {
             <span className="material-symbols-outlined">thermostat</span>
           </div>
           <div>
-            <div className="text-xs text-on-surface-variant font-medium">Grad-CAM Xaritalari</div>
+            <div className="text-xs text-on-surface-variant font-medium">Grad-CAM</div>
             <div className="font-geist font-bold text-xl text-secondary">{heatmapScans} visual</div>
           </div>
         </div>
@@ -150,7 +150,7 @@ export default function ArchiveView({ onSelectPatient, lang = 'uz' }) {
           </span>
           <input
             type="text"
-            placeholder="Skaner ID, Bemor ismi yoki diagnostika..."
+            placeholder={t.search_patients_placeholder}
             value={searchTerm}
             onChange={(e) => setSearchTerm(e.target.value)}
             className="w-full pl-10 pr-4 py-2 bg-surface-container-low border border-outline-variant/50 rounded-xl text-xs font-medium focus:outline-none focus:border-primary text-on-surface placeholder:text-on-surface-variant/60"
@@ -166,7 +166,7 @@ export default function ArchiveView({ onSelectPatient, lang = 'uz' }) {
                 : 'bg-surface-container-high text-on-surface-variant hover:bg-surface-container-highest'
             }`}
           >
-            Barchasi ({totalScans})
+            {t.filter_all} ({totalScans})
           </button>
           <button
             onClick={() => setPathologyFilter('patologiya')}
@@ -176,7 +176,7 @@ export default function ArchiveView({ onSelectPatient, lang = 'uz' }) {
                 : 'bg-error/10 text-error hover:bg-error/20'
             }`}
           >
-            Patologiyalar ({pathologyScans})
+            {t.filter_pathology} ({pathologyScans})
           </button>
           <button
             onClick={() => setPathologyFilter('norma')}
@@ -186,7 +186,7 @@ export default function ArchiveView({ onSelectPatient, lang = 'uz' }) {
                 : 'bg-success/10 text-success hover:bg-success/20'
             }`}
           >
-            Normadagilar ({totalScans - pathologyScans})
+            {t.filter_normal} ({totalScans - pathologyScans})
           </button>
           <button
             onClick={() => setPathologyFilter('tasdiqlangan')}
@@ -196,7 +196,7 @@ export default function ArchiveView({ onSelectPatient, lang = 'uz' }) {
                 : 'bg-secondary/10 text-secondary hover:bg-secondary/20'
             }`}
           >
-            Tasdiqlangan ({approvedScans})
+            {t.filter_approved} ({approvedScans})
           </button>
         </div>
       </div>
@@ -207,14 +207,14 @@ export default function ArchiveView({ onSelectPatient, lang = 'uz' }) {
           <table className="w-full border-collapse text-left">
             <thead>
               <tr className="bg-surface-container-low text-xs font-bold text-on-surface-variant uppercase tracking-wider border-b border-outline-variant/50">
-                <th className="p-4">O'tkazilgan Sana & Vaqt ⬇</th>
-                <th className="p-4">Skaner ID</th>
-                <th className="p-4">Bemor</th>
-                <th className="p-4">Grad-CAM Visual</th>
-                <th className="p-4">AI Diagnostik Natija</th>
-                <th className="p-4">AI Score (%)</th>
-                <th className="p-4">Ekspert Tasdig'i</th>
-                <th className="p-4 text-right">Harakatlar</th>
+                <th className="p-4">{t.table_date} ⬇</th>
+                <th className="p-4">{t.table_scan_id}</th>
+                <th className="p-4">{t.table_patient}</th>
+                <th className="p-4">{t.table_preview}</th>
+                <th className="p-4">{t.table_diagnosis}</th>
+                <th className="p-4">{t.table_prob}</th>
+                <th className="p-4">{t.table_status}</th>
+                <th className="p-4 text-right">{t.table_actions}</th>
               </tr>
             </thead>
             <tbody className="text-sm divide-y divide-outline-variant/20">

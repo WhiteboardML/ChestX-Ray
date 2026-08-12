@@ -69,29 +69,27 @@ export default function PatientsView({ patients, onSelectPatient, onRegisterNewP
   return (
     <div className="flex-1 flex flex-col gap-6">
       {/* Header & New Patient Register Button */}
-      <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 bg-surface-container-lowest p-6 rounded-3xl border border-outline-variant/30 shadow-sm">
+      {/* Page Title */}
+      <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
         <div>
-          <div className="flex items-center gap-3">
-            <h2 className="font-geist text-2xl font-bold text-primary">Bemorlar Kartotekasi va Registratsiyasi</h2>
-            <span className="bg-primary/10 text-primary text-xs font-bold px-3 py-1 rounded-full border border-primary/20">
-              {patients.length} bemor ro'yxatda
-            </span>
-          </div>
+          <h2 className="font-geist text-2xl font-bold text-on-surface">
+            {t.patients_title}
+          </h2>
           <p className="text-xs text-on-surface-variant mt-1">
-            Tizimda ro'yxatdan o'tgan bemorlarning shaxsiy kartochkalari, umumiy statusi va anamnezi
+            {t.patients_subtitle}
           </p>
         </div>
 
         <button
           onClick={() => setShowAddModal(true)}
-          className="px-5 py-2.5 bg-primary text-white rounded-2xl text-xs font-bold flex items-center gap-2 hover:bg-primary-container transition-all shadow-md cursor-pointer self-start md:self-auto"
+          className="px-5 py-2.5 bg-primary text-white rounded-full text-xs font-bold flex items-center gap-2 hover:bg-primary-container transition-all shadow-md cursor-pointer shrink-0"
         >
-          <span className="material-symbols-outlined text-lg">person_add</span>
-          Yangi Bemor Ro'yxatdan O'tkazish
+          <span className="material-symbols-outlined text-[18px]">person_add</span>
+          {t.btn_register_patient}
         </button>
       </div>
 
-      {/* Filter & Search Bar */}
+      {/* Controls Bar */}
       <div className="flex flex-col sm:flex-row items-center justify-between gap-4 bg-surface-container-lowest p-4 rounded-2xl border border-outline-variant/30">
         <div className="relative w-full sm:w-80">
           <span className="material-symbols-outlined absolute left-3.5 top-1/2 -translate-y-1/2 text-on-surface-variant text-lg">
@@ -99,7 +97,7 @@ export default function PatientsView({ patients, onSelectPatient, onRegisterNewP
           </span>
           <input
             type="text"
-            placeholder="Bemor ismi, ID yoki telefon..."
+            placeholder={t.search_patients_placeholder}
             value={searchTerm}
             onChange={(e) => setSearchTerm(e.target.value)}
             className="w-full pl-10 pr-4 py-2 bg-surface-container-low border border-outline-variant/50 rounded-xl text-xs font-medium focus:outline-none focus:border-primary text-on-surface placeholder:text-on-surface-variant/60"
@@ -115,7 +113,7 @@ export default function PatientsView({ patients, onSelectPatient, onRegisterNewP
                 : 'bg-surface-container-high text-on-surface-variant hover:bg-surface-container-highest'
             }`}
           >
-            Barchasi ({patients.length})
+            {t.table_actions} ({patients.length})
           </button>
           <button
             onClick={() => setStatusFilter('nazoratda')}
@@ -125,7 +123,7 @@ export default function PatientsView({ patients, onSelectPatient, onRegisterNewP
                 : 'bg-amber-500/10 text-amber-700 hover:bg-amber-500/20'
             }`}
           >
-            Nazoratda ({patients.filter((p) => (p.medical_status || 'Nazoratda') === 'Nazoratda').length})
+            {t.status_monitoring} ({patients.filter((p) => (p.medical_status || 'Nazoratda') === 'Nazoratda').length})
           </button>
           <button
             onClick={() => setStatusFilter('statsionar')}
@@ -135,7 +133,7 @@ export default function PatientsView({ patients, onSelectPatient, onRegisterNewP
                 : 'bg-error/10 text-error hover:bg-error/20'
             }`}
           >
-            Statsionar ({patients.filter((p) => p.medical_status === 'Statsionar').length})
+            {t.status_stationary} ({patients.filter((p) => p.medical_status === 'Statsionar').length})
           </button>
           <button
             onClick={() => setStatusFilter('patologiya')}
@@ -145,7 +143,7 @@ export default function PatientsView({ patients, onSelectPatient, onRegisterNewP
                 : 'bg-secondary/10 text-secondary hover:bg-secondary/20'
             }`}
           >
-            Patologiya Aniqlangan ({patients.filter((p) => p.diagnosis && p.diagnosis !== 'Norma').length})
+            {t.status_pathology} ({patients.filter((p) => p.diagnosis && p.diagnosis !== 'Norma').length})
           </button>
         </div>
       </div>
