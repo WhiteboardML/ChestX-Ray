@@ -81,20 +81,7 @@ export default function Sidebar({ activeTab, setActiveTab, onNewAnalysis, lang =
         </button>
       </nav>
 
-      {/* Profile Widget */}
-      <div className="px-4 mt-auto pt-6 border-t border-outline-variant/30">
-        <div className="flex items-center gap-3 p-3 bg-surface-container-high rounded-2xl">
-          <img
-            alt="Profile"
-            className="w-10 h-10 rounded-full border-2 border-white object-cover"
-            src="https://lh3.googleusercontent.com/aida-public/AB6AXuCm2GBJis7e6Z3d8iWSIXQTxqzZy7GohEILvQ6l2HkJAY6qHk6vTCNQJdLpLuglndI1kOvoaHcudMbG2W5IFRlq5fg9OgnD-E-3JGoFmWEMpYFGlNyQ8RC-ZjoeY1OPVshRcl-Pte3Gpk6kjBdVACHFJalycR_iLN_Wu-vOBjW9nFsEv9l0daxuw5sRSgu0zy01JbOpd3fmecTj6BQ4WuqA0qUAKo5oYucvZ57V0REpusFC6SAjedLYUg"
-          />
-          <div className="flex flex-col overflow-hidden">
-            <span className="text-sm font-semibold text-on-surface truncate">Dr. Karimov</span>
-            <span className="text-xs text-on-surface-variant truncate font-medium">Pulmonolog</span>
-          </div>
-        </div>
-      </div>
+    
     </aside>
   );
 }
