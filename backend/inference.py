@@ -42,13 +42,26 @@ def run_inference(
 
     # Map raw scores dynamically to model.pathologies
     predictions: List[Dict[str, Any]] = []
+    max_pathology_score = 0.0
+
     for pathology_name, score_val in zip(model.pathologies, scores):
         eng_name = str(pathology_name)
+        val = float(score_val)
+        if val > max_pathology_score:
+            max_pathology_score = val
         predictions.append({
             "disease": eng_name,
             "disease_uz": get_pathology_uz(eng_name),
-            "score": float(score_val)
+            "score": val
         })
+
+    # Add explicit Norma (Normal / No Pathology) category
+    norma_score = max(0.0, min(1.0, 1.0 - max_pathology_score))
+    predictions.append({
+        "disease": "Norma",
+        "disease_uz": get_pathology_uz("Norma"),
+        "score": float(norma_score)
+    })
 
     return {
         "model": MODEL_NAME,

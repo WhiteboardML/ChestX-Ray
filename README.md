@@ -42,39 +42,79 @@ The service accepts chest X-ray images, applies standardized TorchXRayVision ima
 
 ---
 
-## 3. Installation & Local Setup
+## 3. Step-by-Step Running Process
 
-### Step 1: Clone & Navigate
+### Step 1: Clone & Navigate to Project Directory
 
 ```bash
 git clone <repository_url>
-cd chest-xray-backend
+cd "Navoi AI Hackathon"
 ```
 
 ### Step 2: Install Dependencies
 
+1. **Install Backend Dependencies**:
+   ```bash
+   pip install -r requirements.txt
+   ```
+
+2. **Install Frontend Dependencies** (optional, for frontend development or rebuilding UI):
+   ```bash
+   cd frontend
+   npm install
+   cd ..
+   ```
+
+### Step 3: Build the Frontend (Production Integrated Mode)
+
+Build the React frontend assets so they are automatically served by the FastAPI server:
+
 ```bash
-pip install -r requirements.txt
+cd frontend
+npm run build
+cd ..
 ```
 
-### Step 3: Run Service Options
+### Step 4: Run the Application
 
-**Option A: Integrated Chest X-ray AI Medical Web UI & Server (Full-Stack)**
+#### Option A: Integrated Full-Stack Server (Recommended)
 
-Run the integrated server with the React frontend and PyTorch DenseNet-121 backend:
+Run the unified backend server which serves both the API endpoints and the built React web application:
 
 ```bash
 python main.py
 ```
 
-Access the Chest X-ray AI web dashboard at `http://localhost:8000`.
+* **Web UI Application**: Open `http://localhost:8000` in your browser.
+* **Interactive API Documentation (Swagger)**: Open `http://localhost:8000/docs`.
+* **ReDoc API Documentation**: Open `http://localhost:8000/redoc`.
 
-**Option B: Standalone API Server Only**
+#### Option B: Development Mode (Hot-Reload Frontend & Backend)
 
-Run the backend API server standalone:
+For active frontend and backend development:
+
+1. **Start Backend API Server** (Terminal 1):
+   ```bash
+   python main.py
+   # Or using uvicorn directly:
+   # uvicorn backend.main:app --reload --port 8000
+   ```
+
+2. **Start Frontend Dev Server** (Terminal 2):
+   ```bash
+   cd frontend
+   npm run dev
+   ```
+
+* **Frontend Hot-Reloading Dashboard**: Open `http://localhost:5173`.
+* **Backend API & Docs**: Open `http://localhost:8000/docs`.
+
+### Step 5: Run Automated Tests
+
+To run the complete automated test suite (API endpoints, PyTorch model loading, TorchXRayVision preprocessing, and Grad-CAM hooks):
 
 ```bash
-uvicorn backend.main:app --reload
+pytest tests/ -v
 ```
 
 ---

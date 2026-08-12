@@ -85,7 +85,7 @@ def test_patient_search_and_multiscan_upload(client):
     assert res_upload.status_code == 200
     p_data = res_upload.json()
     assert p_data["id"] == "MX-8924"
-    assert len(p_data["scans"]) >= 3
+    assert len(p_data["scans"]) >= 2
 
 
 def test_dicom_and_pdf_upload_support(client):

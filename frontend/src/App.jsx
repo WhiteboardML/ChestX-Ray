@@ -5,9 +5,10 @@ import DashboardView from './components/DashboardView';
 import ResultView from './components/ResultView';
 import ArchiveView from './components/ArchiveView';
 import GuideView from './components/GuideView';
+import PatientsView from './components/PatientsView';
 
 export default function App() {
-  const [activeTab, setActiveTab] = useState('asosiy'); // 'asosiy' | 'arxiv'
+  const [activeTab, setActiveTab] = useState('asosiy'); // 'asosiy' | 'bemorlar' | 'arxiv' | 'yo\'riqnoma'
   const [currentPatient, setCurrentPatient] = useState(null);
   const [patients, setPatients] = useState([]);
 
@@ -51,6 +52,10 @@ export default function App() {
     setActiveTab('asosiy');
   };
 
+  const handleRegisterNewPatient = (newPatient) => {
+    setPatients((prev) => [newPatient, ...prev]);
+  };
+
   return (
     <div className="bg-surface font-sans text-on-surface flex min-h-screen">
       {/* Global Navigation Sidebar */}
@@ -81,11 +86,16 @@ export default function App() {
                 onUploadSuccess={handleUploadSuccess} 
               />
             )
+          ) : activeTab === 'bemorlar' ? (
+            <PatientsView
+              patients={patients}
+              onSelectPatient={handleSelectPatient}
+              onRegisterNewPatient={handleRegisterNewPatient}
+            />
           ) : activeTab === 'yo\'riqnoma' ? (
             <GuideView />
           ) : (
             <ArchiveView
-              patients={patients}
               onSelectPatient={handleSelectPatient}
             />
           )}

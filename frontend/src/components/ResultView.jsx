@@ -263,6 +263,62 @@ export default function ResultView({ patient, onApproveSuccess }) {
         </div>
       </div>
 
+      {/* Urgency Alert Banner (When NOT Norma) */}
+      {activeScan.diagnosis !== 'Norma' ? (
+        <div className="bg-gradient-to-r from-error/15 via-amber-500/10 to-surface-container-lowest p-5 rounded-3xl border-2 border-error/40 shadow-md flex flex-col md:flex-row items-start md:items-center justify-between gap-4 animate-in fade-in duration-300">
+          <div className="flex items-center gap-3.5">
+            <div className="w-12 h-12 rounded-2xl bg-error/20 text-error flex items-center justify-center font-bold text-2xl shrink-0 animate-pulse">
+              🚨
+            </div>
+            <div>
+              <div className="flex items-center gap-2">
+                <span className="bg-error text-white text-[11px] font-bold px-2.5 py-0.5 rounded-full uppercase tracking-wider">
+                  SHOSHILINCH HOLLAT / URGENCY
+                </span>
+                <span className="font-geist font-bold text-xs text-error bg-error/10 px-2 py-0.5 rounded-md border border-error/20">
+                  {activeScan.urgency?.urgency_badge || "O'ta Shoshilinch 🚨"}
+                </span>
+              </div>
+              <h3 className="font-geist text-base font-bold text-on-surface mt-1">
+                {activeScan.diagnosis} ({activeScan.probability}% ishonchlilik) aniqlandi
+              </h3>
+              <p className="text-xs text-on-surface-variant font-medium mt-0.5">
+                {activeScan.urgency?.action_required || "Zudlik bilan shifoxona / pulmonolog vrach ko'rigi va shoshilinch muolaja talab etiladi!"}
+              </p>
+            </div>
+          </div>
+
+          <div className="flex items-center gap-2 self-end md:self-auto">
+            <span className="px-3 py-1.5 bg-error/15 text-error rounded-xl text-xs font-bold border border-error/30 flex items-center gap-1.5">
+              <span className="material-symbols-outlined text-base">warning</span>
+              Zudlik Bilan Vrach Ko'rigi Zarur
+            </span>
+          </div>
+        </div>
+      ) : (
+        <div className="bg-success/10 p-5 rounded-3xl border border-success/30 shadow-sm flex items-center gap-3.5 animate-in fade-in duration-300">
+          <div className="w-12 h-12 rounded-2xl bg-success/20 text-success flex items-center justify-center font-bold text-2xl shrink-0">
+            ✅
+          </div>
+          <div>
+            <div className="flex items-center gap-2">
+              <span className="bg-success text-white text-[11px] font-bold px-2.5 py-0.5 rounded-full uppercase tracking-wider">
+                ME'YORDA / NORMAL
+              </span>
+              <span className="text-xs font-bold text-success bg-success/15 px-2 py-0.5 rounded-md">
+                Shoshilinchlik yo'q
+              </span>
+            </div>
+            <h3 className="font-geist text-base font-bold text-on-surface mt-1">
+              Rentgenogramma bo'yicha me'yorda (Sog'lom)
+            </h3>
+            <p className="text-xs text-on-surface-variant font-medium mt-0.5">
+              Sun'iy intellekt o'pka to'qimalarida hech qanday yaqqol patologiyani aniqlamadi. O'pka a'zolari me'yorda.
+            </p>
+          </div>
+        </div>
+      )}
+
       {/* Scan Timeline History Selector Bar */}
       {scans.length > 1 && (
         <div className="bg-surface-container-low/60 rounded-2xl p-3 border border-outline-variant/30 flex items-center gap-3 overflow-x-auto">

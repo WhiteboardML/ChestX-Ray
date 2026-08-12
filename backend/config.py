@@ -6,6 +6,7 @@ IMAGE_SIZE = 224
 MAX_IMAGE_SIZE_BYTES = 10 * 1024 * 1024  # 10 MB
 
 PATHOLOGY_TRANSLATIONS_UZ = {
+    "Norma": "Norma (Me'yorda)",
     "Atelectasis": "Atelektaz",
     "Consolidation": "Konsolidatsiya",
     "Infiltration": "Infiltratsiya",

@@ -8,8 +8,8 @@ export default function Sidebar({ activeTab, setActiveTab, onNewAnalysis }) {
         <div className="flex items-center gap-3">
           <img
             alt="AvicennaX AI Logo"
-            className="h-8 w-auto object-contain"
-            src="https://lh3.googleusercontent.com/aida-public/AB6AXuAZJfe1V6mU89xEy10bKC7vOdfusY_alyZEfzWqFNgrcQjMwlHwMC86Lme_kE6pkOpSIMbbpIId6a_KBFCkMC6LOcXU4uy9oN55qMGGcPdPJstD3ouJ0YjmIF2HOIIAXAm3wRaRUMXzaC9ze2ZifGiBqcxmiqQ9dmbHZNB3dFMeXbDzMYY9iYVnfMOT5R4i2ZvTm_sPyCF_6cXo2HHHscp-ZDOJTlgNryKVTfBTCaC44yUbX5NgjzKHEA"
+            className="h-10 w-auto object-contain"
+            src="/logo-icon.png"
           />
           <span className="font-geist text-2xl font-bold text-primary tracking-tight">AvicennaX AI</span>
         </div>
@@ -28,6 +28,19 @@ export default function Sidebar({ activeTab, setActiveTab, onNewAnalysis }) {
           <span className="material-symbols-outlined mr-4 group-hover:scale-110 transition-transform">dashboard</span>
           <span className="font-geist text-sm uppercase font-semibold">Asosiy panel</span>
         </button>
+
+        <button
+          onClick={() => setActiveTab('bemorlar')}
+          className={`w-full flex items-center px-4 py-3 rounded-xl transition-all group font-semibold text-left ${
+            activeTab === 'bemorlar'
+              ? 'bg-primary-container text-on-primary-container shadow-sm'
+              : 'text-on-surface-variant hover:bg-surface-container-high hover:text-on-surface'
+          }`}
+        >
+          <span className="material-symbols-outlined mr-4 group-hover:scale-110 transition-transform">groups</span>
+          <span className="font-geist text-sm uppercase font-semibold">Bemorlar</span>
+        </button>
+
         <button
           onClick={() => setActiveTab('arxiv')}
           className={`w-full flex items-center px-4 py-3 rounded-xl transition-all group font-semibold text-left ${
@@ -39,6 +52,7 @@ export default function Sidebar({ activeTab, setActiveTab, onNewAnalysis }) {
           <span className="material-symbols-outlined mr-4 group-hover:scale-110 transition-transform">folder_zip</span>
           <span className="font-geist text-sm uppercase font-semibold">Arxiv</span>
         </button>
+
         <button
           onClick={() => setActiveTab('yo\'riqnoma')}
           className={`w-full flex items-center px-4 py-3 rounded-xl transition-all group font-semibold text-left ${
@@ -49,13 +63,6 @@ export default function Sidebar({ activeTab, setActiveTab, onNewAnalysis }) {
         >
           <span className="material-symbols-outlined mr-4 group-hover:scale-110 transition-transform">menu_book</span>
           <span className="font-geist text-sm uppercase font-semibold">Yo'riqnoma</span>
-        </button>
-        <button
-          onClick={() => setActiveTab('arxiv')}
-          className="w-full flex items-center px-4 py-3 rounded-xl text-on-surface-variant hover:bg-surface-container-high hover:text-on-surface transition-all group font-semibold text-left"
-        >
-          <span className="material-symbols-outlined mr-4 group-hover:scale-110 transition-transform">groups</span>
-          <span className="font-geist text-sm uppercase font-semibold">Bemorlar</span>
         </button>
       </nav>
 

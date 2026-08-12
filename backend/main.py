@@ -14,12 +14,13 @@ import logging
 from typing import List, Optional
 from contextlib import asynccontextmanager
 
-from fastapi import FastAPI, File, UploadFile, Form, HTTPException, Response, status
+from fastapi import FastAPI, File, UploadFile, Form, HTTPException, Response, status, Depends
 from fastapi.responses import HTMLResponse, FileResponse, StreamingResponse, JSONResponse
 from fastapi.staticfiles import StaticFiles
 from fastapi.middleware.cors import CORSMiddleware
 from pydantic import BaseModel
 from PIL import Image, ImageDraw, ImageFilter
+from sqlalchemy.orm import Session
 
 from backend.config import MODEL_NAME, MAX_IMAGE_SIZE_BYTES, get_pathology_uz, get_pathology_en
 from backend.model_service import load_model, get_model, get_device
@@ -28,6 +29,10 @@ from backend.inference import run_inference
 from backend.cam_service import generate_gradcam
 from backend.utils import validate_and_load_image
 from backend.schemas import HealthResponse, PredictResponse, AnalyzeResponse, ErrorResponse
+from backend.database import get_db
+from backend.models import Patient, Scan
+from backend.init_db import init_db
+from llm.service import chat_with_medical_llm, synthesize_xray_report
 
 # Configure logging
 logging.basicConfig(
@@ -45,20 +50,20 @@ os.makedirs(STATIC_DIR, exist_ok=True)
 os.makedirs(FRONTEND_DIST_DIR, exist_ok=True)
 
 
-
 @asynccontextmanager
 async def lifespan(app: FastAPI):
     """
     FastAPI Lifespan Context Manager.
-    Pre-loads the TorchXRayVision DenseNet-121 model once at application startup.
+    Initializes SQLite Database & pre-loads the TorchXRayVision DenseNet-121 model.
     """
-    logger.info("Application starting up... Loading TorchXRayVision DenseNet-121 model.")
+    logger.info("Application starting up... Initializing SQLite Database and pre-loading model.")
     try:
+        init_db()
         load_model()
-        logger.info("Model pre-loaded successfully during startup.")
+        logger.info("Database initialized and Model pre-loaded successfully during startup.")
     except Exception as e:
-        logger.critical(f"Critical error during startup model loading: {e}", exc_info=True)
-        raise RuntimeError(f"Startup model initialization failed: {e}") from e
+        logger.critical(f"Critical error during startup: {e}", exc_info=True)
+        raise RuntimeError(f"Startup initialization failed: {e}") from e
 
     yield
 
@@ -415,12 +420,13 @@ async def upload_xray(
     last_name: Optional[str] = Form(None),
     age: Optional[int] = Form(None),
     gender: Optional[str] = Form(None),
-    existing_patient_id: Optional[str] = Form(None)
+    existing_patient_id: Optional[str] = Form(None),
+    db: Session = Depends(get_db)
 ):
     """
     Upload X-ray image from Web UI.
     Runs TorchXRayVision DenseNet-121 inference & Grad-CAM heatmap generation!
-    Attaches scan to existing patient profile if existing_patient_id is provided.
+    Saves scan and patient records into SQLite database via SQLAlchemy.
     """
     filename_lower = file.filename.lower()
     allowed_exts = ('.png', '.jpg', '.jpeg', '.dcm', '.dicom', '.pdf', '.webp', '.bmp', '.tif', '.tiff')
@@ -458,17 +464,68 @@ async def upload_xray(
         logger.error(f"Inference error during upload: {e}", exc_info=True)
         raise HTTPException(status_code=500, detail="Model tahlilida xatolik yuz berdi.")
 
-    top_pred = max(raw_predictions, key=lambda p: p["score"])
-    top_disease_eng = top_pred["disease"]
-    top_disease_uz = top_pred.get("disease_uz", get_pathology_uz(top_disease_eng))
-    top_score = top_pred["score"]
+    # Evaluate primary diagnosis: check if pathology is present or Norma
+    pathology_preds = [p for p in raw_predictions if p["disease"] != "Norma"]
+    top_pathology = max(pathology_preds, key=lambda p: p["score"]) if pathology_preds else None
+
+    if top_pathology and top_pathology["score"] >= 0.20:
+        top_pred = top_pathology
+        top_disease_eng = top_pred["disease"]
+        top_disease_uz = top_pred.get("disease_uz", get_pathology_uz(top_disease_eng))
+        top_score = top_pred["score"]
+    else:
+        top_pred = next((p for p in raw_predictions if p["disease"] == "Norma"), raw_predictions[0])
+        top_disease_eng = "Norma"
+        top_disease_uz = "Norma (Me'yorda)"
+        top_score = top_pred["score"]
+
     prob_percentage = round(float(top_score) * 100, 1)
 
-    # Real Grad-CAM Heatmap for top pathology
+    # Urgency Evaluation (Shoshilinchlik darajasi)
+    def get_urgency_info(disease_eng: str, score: float) -> dict:
+        if disease_eng == "Norma" or score < 0.20:
+            return {
+                "urgency_code": "NORMAL",
+                "urgency_badge": "Me'yorda ✅",
+                "urgency_color": "success",
+                "urgency_title": "Me'yorda (Shoshilinchlik yo'q)",
+                "action_required": "✅ Shoshilinchlik holati aniqlanmadi. Bemor salomatlik ko'rsatkichlari me'yorda."
+            }
+
+        high_risk = ["Pneumothorax", "Pneumonia", "Edema", "Consolidation", "Effusion"]
+        if score >= 0.60 or (disease_eng in high_risk and score >= 0.45):
+            return {
+                "urgency_code": "CRITICAL",
+                "urgency_badge": "O'TA SHOSHILINCH 🚨",
+                "urgency_color": "error",
+                "urgency_title": "🚨 O'TA SHOSHILINCH (Zudlik bilan pulmonolog ko'rigi zarur!)",
+                "action_required": "🚨 Zudlik bilan shoshilinch tibbiy yordam va pulmonolog vrach ko'rigi talab etiladi!"
+            }
+        elif score >= 0.35:
+            return {
+                "urgency_code": "HIGH",
+                "urgency_badge": "Yuqori Shoshilinchlik ⚠️",
+                "urgency_color": "amber",
+                "urgency_title": "⚠️ YUQORI SHOSHILINCHLIK (Vrach nazorati talab etiladi)",
+                "action_required": "⚠️ Vrach-pulmonolog nazorati va qo'shimcha laboratoriya tekshiruvi zarur."
+            }
+        else:
+            return {
+                "urgency_code": "MODERATE",
+                "urgency_badge": "O'rta Shoshilinchlik ⚡",
+                "urgency_color": "yellow",
+                "urgency_title": "⚡ O'RTA SHOSHILINCHLIK",
+                "action_required": "⚡ Ambulator kuzatuv va 7 kun ichida takroriy tahlil tavsiya etiladi."
+            }
+
+    urgency_info = get_urgency_info(top_disease_eng, top_score)
+
+    # Real Grad-CAM Heatmap for target pathology
     heatmap_filename = f"{file_id}_heatmap.png"
     heatmap_dest_path = os.path.join(UPLOAD_DIR, heatmap_filename)
+    gradcam_target_disease = top_disease_eng if top_disease_eng != "Norma" else (top_pathology["disease"] if top_pathology else "Pneumonia")
     try:
-        gradcam_bytes, _ = generate_gradcam(image_bytes, disease=top_disease_eng)
+        gradcam_bytes, _ = generate_gradcam(image_bytes, disease=gradcam_target_disease)
         with open(heatmap_dest_path, "wb") as h_buffer:
             h_buffer.write(gradcam_bytes)
     except Exception as e:
@@ -476,14 +533,21 @@ async def upload_xray(
         with open(heatmap_dest_path, "wb") as h_buffer:
             h_buffer.write(image_bytes)
 
-    summary_text = f"TorchXRayVision DenseNet-121 tahliliga ko'ra asosiy patologiya: {top_disease_uz} ({top_disease_eng}, raw score: {top_score:.3f})."
-    simple_text = f"Sun'iy intellekt rentgen tasvirida {top_disease_uz} xususiyatlarini aniqladi. O'z vaqtida shifokor ko'rigidan o'tish tavsiya etiladi."
-    precautions = [
-        "Shifokor-rentgenolog ko'rigiga murojaat qiling.",
-        "Qon va balg'am laboratoriya tahlillarini topshiring.",
-        "Nafas olish holatini va tana haroratini kuzatib boring."
-    ]
-    technical_text = f"DenseNet-121 (res224-all) pretrained model orqali 18 ta patologiya baholandi. Barcha raw model score'lari: " + ", ".join([f"{p.get('disease_uz', p['disease'])} ({p['disease']}): {p['score']:.3f}" for p in raw_predictions[:5]])
+    if top_disease_eng == "Norma":
+        summary_text = f"TorchXRayVision DenseNet-121 tahliliga ko'ra o'pka to'qimalari ME'YORDA (Norma: {prob_percentage}%)."
+        simple_text = f"Sun'iy intellekt rentgenogrammada hech qanday yaqqol patologiyani aniqlamadi. O'pka a'zolari me'yorda."
+        precautions = ["Sog'lom turmush tarziga rioya qiling.", "Har yillik profilaktik rentgen ko'rigidan o'tib turing."]
+    else:
+        summary_text = f"TorchXRayVision DenseNet-121 tahliliga ko'ra asosiy patologiya: {top_disease_uz} ({top_disease_eng}, raw score: {top_score:.3f}). {urgency_info['urgency_title']}"
+        simple_text = f"Sun'iy intellekt rentgen tasvirida {top_disease_uz} alomatlarini aniqladi ({prob_percentage}%). {urgency_info['action_required']}"
+        precautions = [
+            urgency_info['action_required'],
+            "Shifokor-pulmonolog ko'rigiga murojaat qiling.",
+            "Qon va balg'am laboratoriya tahlillarini topshiring.",
+            "Nafas olish holatini va tana haroratini kuzatib boring."
+        ]
+
+    technical_text = f"DenseNet-121 (res224-all) model orqali 18 ta patologiya va Norma baholandi. Shoshilinchlik darajasi: {urgency_info['urgency_code']}. Raw score'lar: " + ", ".join([f"{p.get('disease_uz', p['disease'])}: {p['score']:.3f}" for p in raw_predictions[:6]])
 
     findings = {
         "summary": summary_text,
@@ -495,86 +559,86 @@ async def upload_xray(
     timestamp_str = datetime.datetime.now().strftime("Bugun, %H:%M")
     scan_id = f"SCAN-{uuid.uuid4().hex[:6].upper()}"
 
-    new_scan = {
-        "scan_id": scan_id,
-        "timestamp": timestamp_str,
-        "diagnosis": top_disease_uz,
-        "diagnosis_eng": top_disease_eng,
-        "probability": prob_percentage,
-        "original_image": f"/uploads/{image_filename}",
-        "heatmap_image": f"/uploads/{heatmap_filename}",
-        "status": "Ko'rik kutilmoqda",
-        "approved_by": None,
-        "approved_time": None,
-        "raw_scores": raw_predictions,
-        "findings": findings
-    }
-
-    if existing_patient_id and existing_patient_id in PATIENTS_DATABASE:
-        patient_record = PATIENTS_DATABASE[existing_patient_id]
-        if "scans" not in patient_record:
-            patient_record["scans"] = []
-        patient_record["scans"].append(new_scan)
-        # Update patient record with new scan details
-        patient_record.update({
-            "upload_time": timestamp_str,
-            "diagnosis": top_disease_uz,
-            "diagnosis_eng": top_disease_eng,
-            "probability": prob_percentage,
-            "original_image": f"/uploads/{image_filename}",
-            "heatmap_image": f"/uploads/{heatmap_filename}",
-            "status": "Ko'rik kutilmoqda",
-            "approved_by": None,
-            "approved_time": None,
-            "raw_scores": raw_predictions,
-            "findings": findings
-        })
-        PATIENTS_DATABASE[existing_patient_id] = patient_record
-        return patient_record
+    # Database Persistence via SQLAlchemy
+    if existing_patient_id:
+        patient = db.query(Patient).filter(Patient.id == existing_patient_id).first()
+        if patient:
+            patient.diagnosis = top_disease_uz
+            patient.probability = prob_percentage
+            patient.status = "Ko'rik kutilmoqda"
+        else:
+            f_name = (first_name or "").strip()
+            l_name = (last_name or "").strip()
+            full_name = f"{l_name} {f_name}".strip() or "Yangi Bemor"
+            patient = Patient(
+                id=existing_patient_id,
+                first_name=f_name,
+                last_name=l_name,
+                name=full_name,
+                age=age if age is not None else 40,
+                gender=gender if gender else "Erkak",
+                phone="+998 90 123-45-67",
+                medical_status="Nazoratda",
+                created_at=datetime.datetime.now().strftime("%Y-%m-%d"),
+                status="Ko'rik kutilmoqda",
+                diagnosis=top_disease_uz,
+                probability=prob_percentage
+            )
+            db.add(patient)
+            db.flush()
     else:
         pid = f"MX-{uuid.uuid4().hex[:4].upper()}"
         f_name = (first_name or "").strip()
         l_name = (last_name or "").strip()
         full_name = f"{l_name} {f_name}".strip() or "Yangi Bemor"
-        patient_age = age if age is not None else 40
-        patient_gender = gender if gender else "Erkak"
+        patient = Patient(
+            id=pid,
+            first_name=f_name,
+            last_name=l_name,
+            name=full_name,
+            age=age if age is not None else 40,
+            gender=gender if gender else "Erkak",
+            phone="+998 90 123-45-67",
+            medical_status="Nazoratda",
+            created_at=datetime.datetime.now().strftime("%Y-%m-%d"),
+            status="Ko'rik kutilmoqda",
+            diagnosis=top_disease_uz,
+            probability=prob_percentage
+        )
+        db.add(patient)
+        db.flush()
 
-        patient_record = {
-            "id": pid,
-            "first_name": f_name,
-            "last_name": l_name,
-            "name": full_name,
-            "age": patient_age,
-            "gender": patient_gender,
-            "created_at": datetime.datetime.now().strftime("%Y-%m-%d"),
-            "upload_time": timestamp_str,
-            "diagnosis": top_disease_uz,
-            "diagnosis_eng": top_disease_eng,
-            "probability": prob_percentage,
-            "original_image": f"/uploads/{image_filename}",
-            "heatmap_image": f"/uploads/{heatmap_filename}",
-            "status": "Ko'rik kutilmoqda",
-            "approved_by": None,
-            "approved_time": None,
-            "raw_scores": raw_predictions,
-            "findings": findings,
-            "scans": [new_scan]
-        }
-
-        PATIENTS_DATABASE[pid] = patient_record
-        return patient_record
+    new_scan = Scan(
+        scan_id=scan_id,
+        patient_id=patient.id,
+        timestamp=timestamp_str,
+        diagnosis=top_disease_uz,
+        diagnosis_eng=top_disease_eng,
+        probability=prob_percentage,
+        urgency=urgency_info,
+        original_image=f"/uploads/{image_filename}",
+        heatmap_image=f"/uploads/{heatmap_filename}",
+        status="Ko'rik kutilmoqda",
+        raw_scores=raw_predictions,
+        findings=findings
+    )
+    db.add(new_scan)
+    db.commit()
+    db.refresh(patient)
+    return patient.to_dict()
 
 
 @app.get("/api/gradcam/{patient_id}/{disease}")
-async def dynamic_gradcam_for_disease(patient_id: str, disease: str):
+async def dynamic_gradcam_for_disease(patient_id: str, disease: str, db: Session = Depends(get_db)):
     """
     Generate dynamic Grad-CAM heatmap overlay for a specific requested disease on a patient's X-ray.
     """
-    if patient_id not in PATIENTS_DATABASE:
+    patient = db.query(Patient).filter(Patient.id == patient_id).first()
+    if not patient:
         raise HTTPException(status_code=404, detail="Bemor topilmadi")
 
-    patient = PATIENTS_DATABASE[patient_id]
-    original_rel_path = patient["original_image"].lstrip("/")
+    patient_dict = patient.to_dict()
+    original_rel_path = patient_dict["original_image"].lstrip("/")
     original_full_path = os.path.join(PROJECT_ROOT, original_rel_path)
 
     if not os.path.exists(original_full_path):
@@ -599,64 +663,122 @@ async def dynamic_gradcam_for_disease(patient_id: str, disease: str):
 
 @app.post("/api/chat")
 async def chat_assistant(req: ChatRequest):
+    """
+    Local Offline Medical Q&A Assistant.
+    Ensures 100% patient data privacy with zero external network data transmission.
+    """
     msg = req.message.strip().lower()
-    diag = req.diagnosis
-    response = ""
+    diag = req.diagnosis or "Norma"
+    
     if "harorat" in msg or "isitma" in msg or "39" in msg or "40" in msg:
         response = ("Yuqori tana harorati (39-40°C) o'pka to'qimalarida yallig'lanish yoki "
-                    "infeksiya borligidan dalolat. Birinchi yordam sifatida isitmani "
-                    "tushiruvchilar (Paratsetamol 500mg yoki Ibuprofen 400mg) qabul qilish kerak.")
+                    "infeksiya borligidan dalolat berishi mumkin. Birinchi yordam sifatida isitmani "
+                    "tushiruvchilar (Paratsetamol 500mg yoki Ibuprofen 400mg) qabul qilish va "
+                    "shifokor ko'rigiga uchrash tavsiya etiladi.")
     elif "nafas" in msg or "qisishi" in msg:
         response = ("O'tkir nafas qisishi yuzaga kelsa, bemorni yarim o'tirgan holatga keltiring. "
-                    "Saturatsiya 92% dan past bo'lsa, zudlik bilan 103 chaqiring.")
+                    "Saturatsiya (SpO2) 92% dan past bo'lsa, zudlik bilan 103 shoshilinch yordam chaqiring.")
+    elif "pnevmoniya" in msg or "pneumonia" in msg or "pnevmoniya" in diag.lower():
+        response = ("Pnevmoniya aniqlangan holatlarda SSV davolash protokoli bo'yicha: "
+                    "bemorga yetarlicha dam olish, ko'p miqdorda iliq suyuqlik ichish hamda vrach-pulmonolog "
+                    "tomonidan tayinlangan antibakterial terapiya talab etiladi.")
+    elif "dori" in msg or "doza" in msg or "davolash" in msg:
+        response = f"Ushbu ({diag}) holati bo'yicha dori vositalari va davolash kursi faqatgina davolovchi vrach-pulmonolog tomonidan shaxsiy ko'rikdan so'ng tayinlanishi shart."
     else:
-        response = f"Ushbu {diag} tahlili bo'yicha SSV yo'riqnomasi asosida maslahat: Shifokor stetoskopik ko'rigi va rentgenolog tasdiqlashi zarur."
+        response = f"Ushbu ({diag}) tahlili bo'yicha SSV yo'riqnomasi va klinik bayonnoma asosida maslahat: Shifokor stetoskopik ko'rigi hamda laboratoriya tahlillari zarur."
 
     return {"message": response}
 
 
 @app.post("/api/approve/{patient_id}")
-async def approve_report(patient_id: str, req: ApproveRequest):
-    if patient_id not in PATIENTS_DATABASE:
+async def approve_report(patient_id: str, req: ApproveRequest, db: Session = Depends(get_db)):
+    patient = db.query(Patient).filter(Patient.id == patient_id).first()
+    if not patient:
         raise HTTPException(status_code=404, detail="Bemor topilmadi")
 
-    patient = PATIENTS_DATABASE[patient_id]
     app_time = datetime.datetime.now().strftime("Bugun, %H:%M")
-    patient["status"] = "Tasdiqlangan"
-    patient["approved_by"] = req.doctor_name
-    patient["approved_time"] = app_time
+    patient.status = "Tasdiqlangan"
 
-    if "scans" in patient and patient["scans"]:
-        patient["scans"][-1]["status"] = "Tasdiqlangan"
-        patient["scans"][-1]["approved_by"] = req.doctor_name
-        patient["scans"][-1]["approved_time"] = app_time
+    if patient.scans:
+        latest_scan = patient.scans[0]
+        latest_scan.status = "Tasdiqlangan"
+        latest_scan.approved_by = req.doctor_name
+        latest_scan.approved_time = app_time
 
-    PATIENTS_DATABASE[patient_id] = patient
-    return patient
+    db.commit()
+    db.refresh(patient)
+    return patient.to_dict()
 
 
 @app.get("/api/history")
-async def get_patient_history():
-    return list(PATIENTS_DATABASE.values())
+async def get_patient_history(db: Session = Depends(get_db)):
+    patients = db.query(Patient).all()
+    return [p.to_dict() for p in patients]
+
+
+@app.get("/api/scans")
+async def get_all_scans(db: Session = Depends(get_db)):
+    """Return flattened list of all X-ray scans across all patients for the Arxiv repository, sorted newest date first."""
+    scans = db.query(Scan).order_by(Scan.id.desc()).all()
+    return [s.to_dict() for s in scans]
+
+
+class CreatePatientRequest(BaseModel):
+    name: str
+    age: int
+    gender: str
+    phone: Optional[str] = "+998 90 123-45-67"
+    medical_status: Optional[str] = "Nazoratda"
+
+
+@app.post("/api/patients")
+async def create_patient(req: CreatePatientRequest, db: Session = Depends(get_db)):
+    """Register a new patient profile in the SQLite database via SQLAlchemy."""
+    count = db.query(Patient).count()
+    new_id = f"MX-{count + 8925}"
+    name_parts = req.name.strip().split()
+    first_name = name_parts[0] if name_parts else req.name
+    last_name = name_parts[-1] if len(name_parts) > 1 else ""
+
+    patient = Patient(
+        id=new_id,
+        first_name=first_name,
+        last_name=last_name,
+        name=req.name,
+        age=req.age,
+        gender=req.gender,
+        phone=req.phone or "+998 90 123-45-67",
+        medical_status=req.medical_status or "Nazoratda",
+        created_at=datetime.datetime.now().strftime("%Y-%m-%d"),
+        status="Kutilmoqda",
+        diagnosis="Tahlil kutilmoqda",
+        probability=0.0
+    )
+    db.add(patient)
+    db.commit()
+    db.refresh(patient)
+    logger.info(f"Registered new patient profile in SQLite DB: {new_id} ({req.name})")
+    return patient.to_dict()
 
 
 @app.get("/api/patient/{patient_id}")
-async def get_patient_details(patient_id: str):
-    if patient_id not in PATIENTS_DATABASE:
+async def get_patient_details(patient_id: str, db: Session = Depends(get_db)):
+    patient = db.query(Patient).filter(Patient.id == patient_id).first()
+    if not patient:
         raise HTTPException(status_code=404, detail="Bemor topilmadi")
-    return PATIENTS_DATABASE[patient_id]
+    return patient.to_dict()
 
 
 @app.get("/api/pdf/{patient_id}")
-async def generate_pdf_report(patient_id: str):
+async def generate_pdf_report(patient_id: str, db: Session = Depends(get_db)):
     """
     Generate printable diagnostic report for a patient.
     Returns HTML report ready for printing or saving as PDF.
     """
-    if patient_id not in PATIENTS_DATABASE:
+    patient_obj = db.query(Patient).filter(Patient.id == patient_id).first()
+    if not patient_obj:
         raise HTTPException(status_code=404, detail="Bemor topilmadi")
-
-    patient = PATIENTS_DATABASE[patient_id]
+    patient = patient_obj.to_dict()
 
     raw_scores_rows = "".join([
         f"<tr><td>{p['disease']}</td><td>{p['score']:.4f}</td></tr>"
@@ -736,6 +858,27 @@ async def get_index():
     if os.path.exists(dist_index):
         return FileResponse(dist_index)
     return HTMLResponse("<h1>Chest X-ray AI Backend Server is Running</h1><p>Visit <a href='/docs'>/docs</a> for API documentation.</p>")
+
+
+@app.get("/{file_path:path}")
+async def serve_static_or_spa(file_path: str):
+    """
+    Serve static assets from frontend/dist (e.g., logo-icon.png, favicon.svg)
+    and support Single Page Application (SPA) client-side routing fallback.
+    """
+    # Prevent intercepting API endpoints or documentation
+    if file_path.startswith(("api/", "docs", "redoc", "openapi.json", "health", "predict", "gradcam", "analyze", "uploads", "static", "assets")):
+        raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="Resource not found")
+
+    target_file = os.path.join(FRONTEND_DIST_DIR, file_path)
+    if os.path.isfile(target_file):
+        return FileResponse(target_file)
+
+    dist_index = os.path.join(FRONTEND_DIST_DIR, "index.html")
+    if os.path.exists(dist_index):
+        return FileResponse(dist_index)
+
+    raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="Page not found")
 
 
 if __name__ == "__main__":

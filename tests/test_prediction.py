@@ -17,11 +17,13 @@ def test_predict_endpoint_success(client):
     predictions = data["predictions"]
     model = get_model()
 
-    # Verify count and pathology ordering match model.pathologies exactly
-    assert len(predictions) == len(model.pathologies)
-    for idx, pred in enumerate(predictions):
-        assert pred["disease"] == model.pathologies[idx]
-        assert isinstance(pred["score"], float)
+    # Verify count includes 18 model pathologies + 1 Norma category
+    assert len(predictions) == len(model.pathologies) + 1
+    for idx, pathology in enumerate(model.pathologies):
+        assert predictions[idx]["disease"] == pathology
+        assert isinstance(predictions[idx]["score"], float)
+    assert predictions[-1]["disease"] == "Norma"
+    assert isinstance(predictions[-1]["score"], float)
 
 
 def test_analyze_endpoint_success(client):
@@ -39,10 +41,11 @@ def test_analyze_endpoint_success(client):
     pathologies = data["pathologies"]
     model = get_model()
 
-    assert len(pathologies) == len(model.pathologies)
-    for idx, item in enumerate(pathologies):
-        assert item["disease"] == model.pathologies[idx]
-        assert isinstance(item["score"], float)
+    assert len(pathologies) == len(model.pathologies) + 1
+    for idx, item in enumerate(model.pathologies):
+        assert pathologies[idx]["disease"] == item
+        assert isinstance(pathologies[idx]["score"], float)
+    assert pathologies[-1]["disease"] == "Norma"
 
 
 def test_predict_endpoint_invalid_file(client):
