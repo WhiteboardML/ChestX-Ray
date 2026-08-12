@@ -35,3 +35,16 @@ def test_rag_multilingual_support():
     )
     assert result_ru["is_rag_grounded"] is True
     assert "Пневмоторакс" in result_ru["message"] or "Клинический" in result_ru["message"]
+
+
+def test_qwen_integration_fallback():
+    from rag.qwen_llm import generate_qwen_response
+    res = generate_qwen_response(
+        user_query="Pnevmoniya bo'yicha yo'riqnoma",
+        context_chunks=["Pnevmoniya klinik davolash protokoli"],
+        diagnosis="Pneumonia",
+        lang="uz"
+    )
+    assert "status" in res
+    assert "source" in res
+

@@ -3,6 +3,7 @@ Local RAG Engine: Retrieves protocol knowledge & generates fact-grounded clinica
 """
 from typing import Dict, Any, List, Optional
 from rag.vector_store import get_vector_store
+from rag.qwen_llm import generate_qwen_response
 
 
 def query_rag_assistant(
@@ -12,8 +13,8 @@ def query_rag_assistant(
     lang: str = "uz"
 ) -> Dict[str, Any]:
     """
-    RAG Query Assistant for Doctors & Clinicians.
-    Retrieves matching SSV protocols from local vector store and synthesizes grounded answer.
+    RAG Query Assistant for Doctors & Clinicians using Qwen LLM + SSV protocols.
+    Retrieves matching SSV protocols from local vector store and synthesizes grounded answer via Qwen.
     """
     vector_store = get_vector_store()
     search_query = f"{diagnosis} {user_message}"
@@ -36,7 +37,19 @@ def query_rag_assistant(
         else:
             context_chunks.append(f"📌 {doc.get('title_uz')}:\n{doc.get('content_uz')}")
 
-    if context_chunks:
+    # Pass context + prompt to Qwen LLM
+    qwen_res = generate_qwen_response(
+        user_query=user_message,
+        context_chunks=context_chunks,
+        diagnosis=diagnosis,
+        lang=lang
+    )
+
+    if qwen_res["status"] == "success" and qwen_res.get("text"):
+        reply = qwen_res["text"]
+        model_source = qwen_res["source"]
+    elif context_chunks:
+        model_source = "Local Vector RAG Engine"
         context_str = "\n\n".join(context_chunks)
         if lang == "ru":
             reply = f"На основе клинических протоколов Минздрава по диагнозу [{diagnosis}]:\n\n{context_str}\n\n⚠️ Обратите внимание: Все назначения делаются врачом-пульмонологом на личном приеме."
@@ -45,6 +58,7 @@ def query_rag_assistant(
         else:
             reply = f"SSV ning [{diagnosis}] bo'yicha tasdiqlangan klinik protokoli va yo'riqnomasi asosida:\n\n{context_str}\n\n⚠️ Eslatma: Barcha dori vositalari vrach-pulmonolog tomonidan shaxsiy ko'rikda tayinlanadi."
     else:
+        model_source = "Local Vector RAG Engine"
         if lang == "ru":
             reply = f"По диагнозу [{diagnosis}] рекомендуется стационарный или амбулаторный контроль пульмонолога, проведение лабораторных анализов крови и повторная рентгенография через 7-10 дней."
         elif lang == "en":
@@ -55,7 +69,8 @@ def query_rag_assistant(
     return {
         "message": reply,
         "is_rag_grounded": len(context_chunks) > 0,
-        "citations": protocol_citations
+        "citations": protocol_citations,
+        "source": model_source
     }
 
 
