@@ -1,6 +1,9 @@
 import React from 'react';
+import { translations } from '../i18n';
 
-export default function Sidebar({ activeTab, setActiveTab, onNewAnalysis }) {
+export default function Sidebar({ activeTab, setActiveTab, onNewAnalysis, lang = 'uz' }) {
+  const t = translations[lang] || translations.uz;
+
   return (
     <aside className="fixed left-0 top-0 h-full w-[280px] bg-surface-container shadow-[2px_0_12px_rgba(0,0,0,0.02)] z-50 flex flex-col pt-6 pb-8 transition-all">
       {/* Logo and Certification */}
@@ -26,7 +29,7 @@ export default function Sidebar({ activeTab, setActiveTab, onNewAnalysis }) {
           }`}
         >
           <span className="material-symbols-outlined mr-4 group-hover:scale-110 transition-transform">dashboard</span>
-          <span className="font-geist text-sm uppercase font-semibold">Asosiy panel</span>
+          <span className="font-geist text-sm uppercase font-semibold">{t.nav_dashboard}</span>
         </button>
 
         <button
@@ -38,7 +41,7 @@ export default function Sidebar({ activeTab, setActiveTab, onNewAnalysis }) {
           }`}
         >
           <span className="material-symbols-outlined mr-4 group-hover:scale-110 transition-transform">groups</span>
-          <span className="font-geist text-sm uppercase font-semibold">Bemorlar</span>
+          <span className="font-geist text-sm uppercase font-semibold">{t.nav_patients}</span>
         </button>
 
         <button
@@ -50,7 +53,7 @@ export default function Sidebar({ activeTab, setActiveTab, onNewAnalysis }) {
           }`}
         >
           <span className="material-symbols-outlined mr-4 group-hover:scale-110 transition-transform">folder_zip</span>
-          <span className="font-geist text-sm uppercase font-semibold">Arxiv</span>
+          <span className="font-geist text-sm uppercase font-semibold">{t.nav_archive}</span>
         </button>
 
         <button
@@ -62,7 +65,7 @@ export default function Sidebar({ activeTab, setActiveTab, onNewAnalysis }) {
           }`}
         >
           <span className="material-symbols-outlined mr-4 group-hover:scale-110 transition-transform">menu_book</span>
-          <span className="font-geist text-sm uppercase font-semibold">Yo'riqnoma</span>
+          <span className="font-geist text-sm uppercase font-semibold">{t.nav_analytics}</span>
         </button>
       </nav>
 

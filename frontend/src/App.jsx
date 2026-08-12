@@ -11,6 +11,7 @@ export default function App() {
   const [activeTab, setActiveTab] = useState('asosiy'); // 'asosiy' | 'bemorlar' | 'arxiv' | 'yo\'riqnoma'
   const [currentPatient, setCurrentPatient] = useState(null);
   const [patients, setPatients] = useState([]);
+  const [lang, setLang] = useState('uz'); // 'uz' | 'ru' | 'en'
 
   // Fetch patience history logs on startup
   const fetchHistory = async () => {
@@ -63,6 +64,7 @@ export default function App() {
         activeTab={activeTab}
         setActiveTab={setActiveTab}
         onNewAnalysis={handleNewAnalysis}
+        lang={lang}
       />
 
       {/* Main App Frame */}
@@ -70,7 +72,9 @@ export default function App() {
         {/* Sticky Header */}
         <Header 
           patientCount={patients.length} 
-          onNewAnalysis={handleNewAnalysis} 
+          onNewAnalysis={handleNewAnalysis}
+          lang={lang}
+          setLang={setLang}
         />
 
         {/* Body Router Content */}
@@ -80,10 +84,12 @@ export default function App() {
               <ResultView
                 patient={currentPatient}
                 onApproveSuccess={handleApproveSuccess}
+                lang={lang}
               />
             ) : (
               <DashboardView 
-                onUploadSuccess={handleUploadSuccess} 
+                onUploadSuccess={handleUploadSuccess}
+                lang={lang}
               />
             )
           ) : activeTab === 'bemorlar' ? (
@@ -91,12 +97,14 @@ export default function App() {
               patients={patients}
               onSelectPatient={handleSelectPatient}
               onRegisterNewPatient={handleRegisterNewPatient}
+              lang={lang}
             />
           ) : activeTab === 'yo\'riqnoma' ? (
-            <GuideView />
+            <GuideView lang={lang} />
           ) : (
             <ArchiveView
               onSelectPatient={handleSelectPatient}
+              lang={lang}
             />
           )}
         </main>

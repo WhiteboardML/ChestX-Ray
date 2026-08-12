@@ -1,6 +1,8 @@
 import React, { useState, useEffect } from 'react';
+import { translations, getPathologyTranslation } from '../i18n';
 
-export default function ArchiveView({ onSelectPatient }) {
+export default function ArchiveView({ onSelectPatient, lang = 'uz' }) {
+  const t = translations[lang] || translations.uz;
   const [scans, setScans] = useState([]);
   const [loading, setLoading] = useState(true);
   const [searchTerm, setSearchTerm] = useState('');

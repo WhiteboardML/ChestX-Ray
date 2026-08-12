@@ -1,30 +1,11 @@
 import React, { useState, useEffect, useRef } from 'react';
+import { translations, getPathologyTranslation } from '../i18n';
 
-const diseaseUzMap = {
-  "Atelectasis": "Atelektaz",
-  "Consolidation": "Konsolidatsiya",
-  "Infiltration": "Infiltratsiya",
-  "Pneumothorax": "Pnevmotoraks",
-  "Edema": "O'pka shishi",
-  "Emphysema": "Emfizema",
-  "Fibrosis": "Fibroz",
-  "Effusion": "Plevral efuziya",
-  "Pneumonia": "Pnevmoniya",
-  "Pleural_Thickening": "Plevra qalinlashishi",
-  "Cardiomegaly": "Kardiomegaliya",
-  "Nodule": "O'pka tugunlari",
-  "Mass": "Hajmli hosila",
-  "Hernia": "Churra",
-  "Lung Lesion": "O'pka zararlanishi",
-  "Fracture": "Qovurg'a sinishi",
-  "Lung Opacity": "O'pka xiralashishi",
-  "Enlarged Cardiomediastinum": "Kengaygan kardiomediastinum"
-};
-
-const getUzName = (name) => diseaseUzMap[name] || name;
-
-export default function ResultView({ patient, onApproveSuccess }) {
+export default function ResultView({ patient, onApproveSuccess, lang = 'uz' }) {
+  const t = translations[lang] || translations.uz;
   const scans = patient?.scans || [];
+  
+  const getUzName = (name) => getPathologyTranslation(name, lang);
   
   // Selected scan index for single-view mode
   const [selectedScanIndex, setSelectedScanIndex] = useState(scans.length > 0 ? scans.length - 1 : 0);

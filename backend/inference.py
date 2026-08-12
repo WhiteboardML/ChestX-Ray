@@ -2,7 +2,7 @@ from typing import List, Dict, Any
 import torch
 import torchxrayvision as xrv
 
-from backend.config import MODEL_NAME, get_pathology_uz
+from backend.config import MODEL_NAME, get_pathology_uz, get_pathology_ru
 from backend.model_service import get_model, get_device
 from backend.preprocessing import preprocess_image
 
@@ -52,6 +52,7 @@ def run_inference(
         predictions.append({
             "disease": eng_name,
             "disease_uz": get_pathology_uz(eng_name),
+            "disease_ru": get_pathology_ru(eng_name),
             "score": val
         })
 
@@ -60,6 +61,7 @@ def run_inference(
     predictions.append({
         "disease": "Norma",
         "disease_uz": get_pathology_uz("Norma"),
+        "disease_ru": get_pathology_ru("Norma"),
         "score": float(norma_score)
     })
 

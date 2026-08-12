@@ -1,6 +1,8 @@
 import React, { useState } from 'react';
+import { translations, getPathologyTranslation } from '../i18n';
 
-export default function PatientsView({ patients, onSelectPatient, onRegisterNewPatient }) {
+export default function PatientsView({ patients, onSelectPatient, onRegisterNewPatient, lang = 'uz' }) {
+  const t = translations[lang] || translations.uz;
   const [searchTerm, setSearchTerm] = useState('');
   const [statusFilter, setStatusFilter] = useState('barchasi');
   const [selectedPatientModal, setSelectedPatientModal] = useState(null);

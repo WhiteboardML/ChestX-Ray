@@ -1,6 +1,8 @@
 import React, { useState, useEffect, useRef } from 'react';
+import { translations } from '../i18n';
 
-export default function DashboardView({ onUploadSuccess }) {
+export default function DashboardView({ onUploadSuccess, lang = 'uz' }) {
+  const t = translations[lang] || translations.uz;
   const [isDragging, setIsDragging] = useState(false);
   const [isUploading, setIsUploading] = useState(false);
   const [uploadStatus, setUploadStatus] = useState('');
