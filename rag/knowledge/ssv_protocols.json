@@ -1,0 +1,57 @@
+[
+  {
+    "id": "PROTOCOL-001",
+    "disease": "Pneumonia",
+    "title_uz": "Pnevmoniya (O'pka yallig'lanishi) bo'yicha SSV klinik protokoli",
+    "title_ru": "Клинический протокол Минздрава по Пневмонии",
+    "title_en": "MOH Clinical Protocol for Pneumonia",
+    "content_uz": "Pnevmoniya aniqlanganda SSV klinik protokoli bo'yicha: 1. Bemorga ko'p miqdorda iliq suyuqlik va dam olish tavsiya etiladi. 2. Shifokor-pulmonolog ko'rigidan o'tib, balg'am ekmasi va qon tahliliga ko'ra antibakterial terapiya (Amoksitsillin/Klavulanat yoki Azitromitsin) tayinlanadi. 3. Saturatsiya SpO2 < 92% bo'lsa, kislorod terapiyasi va zudlik bilan statsionar yotqizish talab etiladi.",
+    "content_ru": "При выявления пневмонии по клиническому протоколу Минздрава: 1. Рекомендуется обильное теплое питье и постельный режим. 2. Осмотр пульмонолога, анализ мокроты и назначение антибактериальной терапии (Амоксициллин/Клавуланат или Азитромицин). 3. При сатурации SpO2 < 92% требуется оксигенотерапия и экстренная госпитализация.",
+    "content_en": "MOH Pneumonia Protocol: 1. Bed rest and high fluid intake. 2. Pulmonologist consultation for targeted antibacterial therapy (Amoxicillin/Clavulanate or Azithromycin). 3. Oxygen therapy and hospital admission required if SpO2 < 92%.",
+    "tags": ["Pneumonia", "pnevmoniya", "пневмония", "harorat", "isitma", "nafas qisishi", "dori", "doza"]
+  },
+  {
+    "id": "PROTOCOL-002",
+    "disease": "Pneumothorax",
+    "title_uz": "Pnevmotoraks (Plevra bo'shlig'ida havo) bo'yicha Shoshilinch Protokol",
+    "title_ru": "Экстренный протокол при Пневмотораксе",
+    "title_en": "Emergency Protocol for Pneumothorax",
+    "content_uz": "Pnevmotoraks shoshilinch xirurgik holat hisoblanadi. 1. Zudlik bilan 103 shoshilinch yordam chaqirish va bemorni yarim o'tirgan holatda tinchlantirish zarur. 2. Plevra bo'shlig'ini drenajlash (torakostomiya) va kislorod berish talab etiladi. 3. Jismoniy zo'riqish va bosim o'zgarishlari taqiqlanadi.",
+    "content_ru": "Пневмоторакс является экстренным хирургическим состоянием. 1. Немедленный вызов скорой помощи 103, полусидячее положение пациента. 2. Дренирование плевральной полости (торакостомия) и подача кислорода. 3. Запрещены физические нагрузки.",
+    "content_en": "Pneumothorax is an emergency surgical condition. 1. Immediate 103 emergency call, semi-Fowler position. 2. Pleural drainage (thoracostomy) and supplemental oxygen. 3. Physical exertion strictly prohibited.",
+    "tags": ["Pneumothorax", "pnevmotoraks", "пневмоторакс", "shoshilinch", "xirurgiya", "nafas qisishi"]
+  },
+  {
+    "id": "PROTOCOL-003",
+    "disease": "Edema",
+    "title_uz": "O'pka Shishi (Pulmonary Edema) bo'yicha Protokol",
+    "title_ru": "Протокол лечения Отека Легких",
+    "title_en": "Clinical Protocol for Pulmonary Edema",
+    "content_uz": "O'pka shishi kritik holatdir. 1. Bemorning oyoqlarini pastga tushirib o'tqazish. 2. Shoshilinch diuretiklar (Furosemid) va venoz vasodilatatorlar beriladi. 3. 100% kislorod terapiyasi va kardiolog/pulmonolog nazorati shart.",
+    "content_ru": "Отек легких является критическим состоянием. 1. Положение пациента сидя с опущенными ногами. 2. Введение петлевых диуретиков (Фуросемид) и вазодилататоров. 3. 100% оксигенотерапия и контроль кардиолога/реаниматолога.",
+    "content_en": "Pulmonary Edema is critical. 1. Upright seating with legs dangling. 2. Emergency loop diuretics (Furosemide) and vasodilators. 3. 100% oxygen therapy and cardiologist oversight.",
+    "tags": ["Edema", "o'pka shishi", "отек легких", "diuretik", "furosemid", "shoshilinch"]
+  },
+  {
+    "id": "PROTOCOL-004",
+    "disease": "Atelectasis",
+    "title_uz": "Atelektaz (O me'yordagi gipoventilyatsiya) boyicha Tavsiyalar",
+    "title_ru": "Рекомендации при Ателектазе легкого",
+    "title_en": "Clinical Management of Atelectasis",
+    "content_uz": "Atelektazda o'pka to'qimasining yozilmasligi kuzatiladi. 1. Nafas gimnastikasi va rag'batlantiruvchi spirometriya o'tkaziladi. 2. Balg'am ko'chishini yaxshilash uchun mukolitiklar va postural drenaj tavsiya etiladi. 3. Bronxoskopiya ko'rigi o'tkazilishi mumkin.",
+    "content_ru": "При ателектазе наблюдается спадение легочной ткани. 1. Дыхательная гимнастика и стимулирующая спирометрия. 2. Муколитики и постуральный дренаж для отхождения мокроты. 3. Возможно проведение бронхоскопии.",
+    "content_en": "Atelectasis involves lung tissue collapse. 1. Respiratory gymnastics and incentive spirometry. 2. Mucolytics and postural drainage. 3. Bronchoscopy if obstruction persists.",
+    "tags": ["Atelectasis", "atelektaz", "ателектаз", "nafas gimnastikasi", "spirometriya"]
+  },
+  {
+    "id": "PROTOCOL-005",
+    "disease": "Effusion",
+    "title_uz": "Plevral Efuziya (Plevra bo'shlig'ida suyuqlik) boyicha Protokol",
+    "title_ru": "Протокол при Плевральном Выпоте",
+    "title_en": "Clinical Protocol for Pleural Effusion",
+    "content_uz": "Plevral efuziya kuzatilganda: 1. UTT (UZI) va rentgenografiya orqali suyuqlik hajmiga baho beriladi. 2. Suyuqlik ko'p bo'lsa, plevral punksiya (torakotsentez) o'tkazilib, diagnostik tahlil qilinadi. 3. Etio-patogenetik davolash tayinlanadi.",
+    "content_ru": "При плевральном выпоте: 1. УЗИ и рентген-контроль объема жидкости. 2. При значительном объеме выполняется плевральная пункция (торакоцентез). 3. Назначается этиопатогенетическая терапия.",
+    "content_en": "For Pleural Effusion: 1. Ultrasound and X-ray volume assessment. 2. Diagnostic or therapeutic thoracentesis if liquid is excessive. 3. Underlying cause targeted treatment.",
+    "tags": ["Effusion", "plevral efuziya", "плевральный выпот", "punksiya", "suyuqlik"]
+  }
+]

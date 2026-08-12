@@ -661,33 +661,39 @@ async def dynamic_gradcam_for_disease(patient_id: str, disease: str, db: Session
         raise HTTPException(status_code=500, detail="Grad-CAM hosil qilishda xatolik.") from e
 
 
+from rag.rag_engine import query_rag_assistant, build_rag_report
+
+
+class ChatRequest(BaseModel):
+    message: str
+    diagnosis: Optional[str] = "Norma"
+    patient_id: Optional[str] = None
+    lang: Optional[str] = "uz"
+
+
 @app.post("/api/chat")
 async def chat_assistant(req: ChatRequest):
     """
-    Local Offline Medical Q&A Assistant.
-    Ensures 100% patient data privacy with zero external network data transmission.
+    Local Offline RAG Medical Q&A Assistant.
+    Retrieves official SSV medical protocols & grounds advice locally for 100% data privacy.
     """
-    msg = req.message.strip().lower()
+    pid = req.patient_id or "UNKNOWN"
     diag = req.diagnosis or "Norma"
-    
-    if "harorat" in msg or "isitma" in msg or "39" in msg or "40" in msg:
-        response = ("Yuqori tana harorati (39-40°C) o'pka to'qimalarida yallig'lanish yoki "
-                    "infeksiya borligidan dalolat berishi mumkin. Birinchi yordam sifatida isitmani "
-                    "tushiruvchilar (Paratsetamol 500mg yoki Ibuprofen 400mg) qabul qilish va "
-                    "shifokor ko'rigiga uchrash tavsiya etiladi.")
-    elif "nafas" in msg or "qisishi" in msg:
-        response = ("O'tkir nafas qisishi yuzaga kelsa, bemorni yarim o'tirgan holatga keltiring. "
-                    "Saturatsiya (SpO2) 92% dan past bo'lsa, zudlik bilan 103 shoshilinch yordam chaqiring.")
-    elif "pnevmoniya" in msg or "pneumonia" in msg or "pnevmoniya" in diag.lower():
-        response = ("Pnevmoniya aniqlangan holatlarda SSV davolash protokoli bo'yicha: "
-                    "bemorga yetarlicha dam olish, ko'p miqdorda iliq suyuqlik ichish hamda vrach-pulmonolog "
-                    "tomonidan tayinlangan antibakterial terapiya talab etiladi.")
-    elif "dori" in msg or "doza" in msg or "davolash" in msg:
-        response = f"Ushbu ({diag}) holati bo'yicha dori vositalari va davolash kursi faqatgina davolovchi vrach-pulmonolog tomonidan shaxsiy ko'rikdan so'ng tayinlanishi shart."
-    else:
-        response = f"Ushbu ({diag}) tahlili bo'yicha SSV yo'riqnomasi va klinik bayonnoma asosida maslahat: Shifokor stetoskopik ko'rigi hamda laboratoriya tahlillari zarur."
+    msg = req.message or ""
+    language = req.lang or "uz"
 
-    return {"message": response}
+    rag_result = query_rag_assistant(
+        patient_id=pid,
+        diagnosis=diag,
+        user_message=msg,
+        lang=language
+    )
+
+    return {
+        "message": rag_result["message"],
+        "is_rag_grounded": rag_result["is_rag_grounded"],
+        "citations": rag_result["citations"]
+    }
 
 
 @app.post("/api/approve/{patient_id}")
