@@ -110,23 +110,38 @@ python main.py
 
 ---
 
-## 🏗️ System Architecture
+## 🏗️ Layered Architecture & Separation of Concerns (SoC)
+
+The codebase has been refactored from a tightly coupled structure into distinct architectural layers to maximize testability, maintainability, and data security:
 
 ```text
-                  Chest X-Ray Image (PNG, JPG, DICOM .dcm, PDF)
-                                       ↓
-                           FastAPI Web Application
-                                       ↓
-                     TorchXRayVision Image Preprocessing
-                                       ↓
-                 TorchXRayVision DenseNet-121 (res224-all)
-                                       ↓
-                   Raw Pathology Scores & Grad-CAM Engine
-                                       ↓
-                      RAG Vector Engine & MOH Protocols
-                                       ↓
-                 React Web Interface (Bilingual UZ/RU/EN)
+       ┌────────────────────────────────────────────────────────┐
+       │               ENTRYPOINTS & PRESENTATION               │
+       │  - backend/main.py (App bootstrap & CORS config)        │
+       │  - backend/api/v1/endpoints/ (FastAPI APIRouters)      │
+       └───────────────────────────┬────────────────────────────┘
+                                   │
+                                   ▼
+       ┌────────────────────────────────────────────────────────┐
+       │                     SERVICE LAYER                      │
+       │  - backend/services/inference_orchestrator.py          │
+       │  - backend/services/report_generator.py (HTML reports) │
+       └─────────────┬─────────────┬─────────────┬──────────────┘
+                     │             │             │
+                     ▼             ▼             ▼
+       ┌────────────────────────┐ ┌───────────────┐ ┌───────────┐
+       │   REPOSITORIES (DAL)   │ │ CORE ML & RAG │ │  CONFIG   │
+       │  - patient_repository  │ │ - core/ml/    │ │ - config/ │
+       │  - scan_repository     │ │ - core/rag/   │ │ - schemas/│
+       │  - user_repository     │ │               │ │           │
+       └────────────────────────┘ └───────────────┘ └───────────┘
 ```
+
+1. **Presentation / API Routing Layer**: Handles purely HTTP concerns, CORS middlewares, static mounting, and request/response mapping via FastAPI routers ([`api/v1/endpoints/`](file:///Users/baxodir/Coding/ChestXray/ChestX-Ray/backend/api/v1/endpoints/)).
+2. **Service Orchestration Layer**: Manages end-to-end transactional workflows (like parsing image uploads, running ML inference, computing urgency metrics, saving records, and compiling print reports) inside dedicated service classes ([`backend/services/`](file:///Users/baxodir/Coding/ChestXray/ChestX-Ray/backend/services/)).
+3. **Core Engine Layer (PyTorch & Offline RAG)**: Isolated from web frameworks and databases. Handles pure machine learning predictions, Grad-CAM overlays ([`core/ml/`](file:///Users/baxodir/Coding/ChestXray/ChestX-Ray/backend/core/ml/)), and local vector search protocols ([`core/rag/`](file:///Users/baxodir/Coding/ChestXray/ChestX-Ray/backend/core/rag/)).
+4. **Data Access Layer (Repository Pattern)**: Decoupled from serialization models. Coordinates database writes/reads via structured repositories ([`backend/repositories/`](file:///Users/baxodir/Coding/ChestXray/ChestX-Ray/backend/repositories/)) and data connection interfaces ([`backend/database/`](file:///Users/baxodir/Coding/ChestXray/ChestX-Ray/backend/database/)).
+5. **Config & Schema Layer**: Organizes settings, bilingual translations ([`backend/config/`](file:///Users/baxodir/Coding/ChestXray/ChestX-Ray/backend/config/)), and modular Pydantic data schemas ([`backend/schemas/`](file:///Users/baxodir/Coding/ChestXray/ChestX-Ray/backend/schemas/)).
 
 ---
 
@@ -136,8 +151,9 @@ python main.py
 * **Explainability (XAI)**: Grad-CAM heatmap overlays calculated dynamically from `model.features` convolutional layers.
 * **Clinical Protocol RAG**: Local TF-IDF & Cosine Similarity vector store over **Uzbekistan MOH Order No. 180 (2025)** COPD and Pneumonia clinical protocols.
 * **Supported Image Formats**: `.png`, `.jpg`, `.jpeg`, `.dcm` (DICOM), `.pdf` (Radiological reports), `.webp`.
-* **Database & Persistence**: SQLite via SQLAlchemy with automated migrations and seed profiles.
+* **Database & Persistence**: SQLite via SQLAlchemy repositories.
 * **Frontend**: React 18, Vite, GFM Markdown renderer, Material Symbols, and TailwindCSS design system.
+
 
 ---
 
