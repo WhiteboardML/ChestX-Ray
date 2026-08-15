@@ -8,6 +8,7 @@ import GuideView from './components/GuideView';
 import PatientsView from './components/PatientsView';
 import PricingView from './components/PricingView';
 import LoginView from './components/LoginView';
+import StatsView from './components/StatsView';
 
 export default function App() {
   const [activeTab, setActiveTab] = useState('asosiy');
@@ -148,6 +149,8 @@ export default function App() {
               onRegisterNewPatient={handleRegisterNewPatient}
               lang={lang}
             />
+          ) : activeTab === 'statistika' ? (
+            <StatsView lang={lang} />
           ) : activeTab === 'tariflar' ? (
             <PricingView
               currentUser={currentUser}

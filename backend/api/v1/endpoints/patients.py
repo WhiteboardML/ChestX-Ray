@@ -221,3 +221,48 @@ async def generate_pdf_report(patient_id: str, db: Session = Depends(get_db)):
 
     html_content = ReportGenerator.compile_html_report(patient)
     return HTMLResponse(content=html_content)
+
+
+@router.get("/api/stats/dashboard")
+async def get_dashboard_statistics(db: Session = Depends(get_db)):
+    """
+    Get aggregated dashboard statistics for clinical diagnostics visualization.
+    """
+    scans = ScanRepository.get_all_sorted_desc(db)
+    patients_count = PatientRepository.count(db)
+    
+    total_scans = len(scans)
+    
+    # Aggregators
+    pathologies = {}
+    urgency_distribution = {"CRITICAL": 0, "HIGH": 0, "MODERATE": 0, "NORMAL": 0}
+    approval_stats = {"Tasdiqlangan": 0, "Rad etilgan": 0, "Ko'rik kutilmoqda": 0}
+    
+    for s in scans:
+        # Pathology count
+        path = s.diagnosis_eng or "Norma"
+        pathologies[path] = pathologies.get(path, 0) + 1
+        
+        # Urgency count
+        urg_code = "NORMAL"
+        if s.urgency and isinstance(s.urgency, dict):
+            urg_code = s.urgency.get("urgency_code", "NORMAL")
+        urgency_distribution[urg_code] = urgency_distribution.get(urg_code, 0) + 1
+        
+        # Approval status count
+        app_status = s.status or "Ko'rik kutilmoqda"
+        if "Rad etilgan" in app_status:
+            approval_stats["Rad etilgan"] += 1
+        elif "Tasdiqlangan" in app_status:
+            approval_stats["Tasdiqlangan"] += 1
+        else:
+            approval_stats["Ko'rik kutilmoqda"] += 1
+
+    return {
+        "total_scans": total_scans,
+        "total_patients": patients_count,
+        "pathology_distribution": pathologies,
+        "urgency_distribution": urgency_distribution,
+        "approval_stats": approval_stats
+    }
+

@@ -11,6 +11,7 @@ export const translations = {
     nav_pricing: "Tariflar va To'lov",
     nav_analytics: "Yo'riqnoma",
     nav_settings: "Sozlamalar",
+    nav_stats: "Statistika",
     nav_new_analysis: "Yangi tahlil",
 
     // Header & System
@@ -110,6 +111,7 @@ export const translations = {
     nav_pricing: "Тарифы и Оплата",
     nav_analytics: "Инструкция",
     nav_settings: "Настройки",
+    nav_stats: "Статистика",
     nav_new_analysis: "Новый анализ",
 
     // Header & System
@@ -209,6 +211,7 @@ export const translations = {
     nav_pricing: "Pricing & Plans",
     nav_analytics: "Guide",
     nav_settings: "Settings",
+    nav_stats: "Statistics",
     nav_new_analysis: "New Analysis",
 
     // Header & System
