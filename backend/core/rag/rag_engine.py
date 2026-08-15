@@ -1,9 +1,6 @@
-"""
-Local RAG Engine: Retrieves protocol knowledge & generates fact-grounded clinical responses.
-"""
 from typing import Dict, Any, List, Optional
-from rag.vector_store import get_vector_store
-from rag.qwen_llm import generate_qwen_response
+from backend.core.rag.vector_store import get_vector_store
+from backend.core.rag.qwen_llm import generate_qwen_response
 
 
 def query_rag_assistant(

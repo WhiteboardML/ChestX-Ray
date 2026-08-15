@@ -1,0 +1,2 @@
+python-interpreter-path = "/Users/baxodir/Coding/ChestXray/ChestX-Ray/.venv/bin/python"
+site-package-paths = ["/Users/baxodir/Coding/ChestXray/ChestX-Ray/.venv/lib/python3.14/site-packages"]

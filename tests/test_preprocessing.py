@@ -4,7 +4,7 @@ import torch
 import numpy as np
 from PIL import Image
 
-from backend.preprocessing import preprocess_image
+from backend.core.ml.preprocessor import preprocess_image
 
 
 def create_dummy_image_bytes(mode: str = "L", size: tuple = (256, 256), fmt: str = "PNG") -> bytes:

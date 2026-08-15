@@ -1,7 +1,3 @@
-"""
-Qwen LLM Integration Module for AvicennaX RAG.
-Supports Qwen2.5, Qwen2, Qwen-Coder via Ollama, vLLM, DashScope API, or local OpenAI-compatible endpoints.
-"""
 import os
 import json
 import logging

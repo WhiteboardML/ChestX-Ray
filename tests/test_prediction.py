@@ -1,4 +1,4 @@
-from backend.model_service import get_model
+from backend.core.ml.model_manager import get_model
 from tests.test_preprocessing import create_dummy_image_bytes
 
 

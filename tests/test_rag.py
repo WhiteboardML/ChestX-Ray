@@ -1,8 +1,8 @@
 """
 Unit Tests for Local RAG Engine & Vector Store.
 """
-from rag.vector_store import LocalVectorStore, get_vector_store
-from rag.rag_engine import query_rag_assistant, build_rag_report
+from backend.core.rag.vector_store import LocalVectorStore, get_vector_store
+from backend.core.rag.rag_engine import query_rag_assistant, build_rag_report
 
 
 def test_vector_store_indexing_and_search():
@@ -38,7 +38,7 @@ def test_rag_multilingual_support():
 
 
 def test_qwen_integration_fallback():
-    from rag.qwen_llm import generate_qwen_response
+    from backend.core.rag.qwen_llm import generate_qwen_response
     res = generate_qwen_response(
         user_query="Pnevmoniya bo'yicha yo'riqnoma",
         context_chunks=["Pnevmoniya klinik davolash protokoli"],

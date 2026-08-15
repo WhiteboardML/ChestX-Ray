@@ -2,8 +2,8 @@ import pytest
 from fastapi.testclient import TestClient
 
 from backend.main import app
-from backend.model_service import load_model
-from backend.database import SessionLocal, engine, Base
+from backend.core.ml.model_manager import load_model
+from backend.database.connection import SessionLocal, engine, Base
 from backend.init_db import seed_initial_data
 
 

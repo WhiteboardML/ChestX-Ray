@@ -5,8 +5,8 @@ Auto-creates tables, seed patients, and default Admin credentials upon first lau
 import logging
 import datetime
 from sqlalchemy.orm import Session
-from backend.database import engine, Base, SessionLocal
-from backend.models import Patient, Scan, User
+from backend.database.connection import engine, Base, SessionLocal
+from backend.database.models import Patient, Scan, User
 
 logger = logging.getLogger("chest_xray_backend")
 

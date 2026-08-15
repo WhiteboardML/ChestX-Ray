@@ -1,7 +1,3 @@
-"""
-Local Vector Store and Cosine Similarity Retrieval Engine for Medical Protocols.
-Operates 100% offline with zero external cloud dependencies.
-"""
 import os
 import json
 import re

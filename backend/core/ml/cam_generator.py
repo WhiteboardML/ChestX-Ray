@@ -6,9 +6,9 @@ import torch
 import torch.nn.functional as F
 import torchxrayvision as xrv
 
-from backend.config import get_pathology_en, get_pathology_uz
-from backend.model_service import get_model, get_device
-from backend.preprocessing import preprocess_image
+from backend.config.translations import get_pathology_en, get_pathology_uz
+from backend.core.ml.model_manager import get_model, get_device
+from backend.core.ml.preprocessor import preprocess_image
 from backend.utils import encode_array_to_png
 
 logger = logging.getLogger(__name__)
@@ -134,4 +134,3 @@ def generate_gradcam(
     finally:
         # Crucial: Always remove forward hook to prevent memory leaks and hook accumulation
         hook_handle.remove()
-

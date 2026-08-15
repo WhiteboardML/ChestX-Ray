@@ -24,13 +24,13 @@ def preprocess_image(
     6. Move tensor to requested device.
 
     Args:
-        image_bytes (bytes): Raw image file bytes.
-        device (torch.device | str): Target PyTorch device.
+    image_bytes (bytes): Raw image file bytes.
+    device (torch.device | str): Target PyTorch device.
 
     Returns:
-        tuple[torch.Tensor, np.ndarray]:
-            - torch.Tensor: Shape (1, 1, 224, 224) on target device.
-            - np.ndarray: Original image as 2D uint8 numpy array (H, W) for overlay.
+    tuple[torch.Tensor, np.ndarray]:
+    - torch.Tensor: Shape (1, 1, 224, 224) on target device.
+    - np.ndarray: Original image as 2D uint8 numpy array (H, W) for overlay.
     """
     img_np, pil_img = validate_and_load_image(image_bytes)
 
