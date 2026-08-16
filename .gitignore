@@ -48,3 +48,8 @@ htmlcov/
 *.jpg
 *.jpeg
 gradcam_output.png
+
+# Large model weights and archives
+outputs_qwen2_5_vl_7b_cxr_lora_model/
+*.zip
+

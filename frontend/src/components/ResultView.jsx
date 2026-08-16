@@ -673,6 +673,26 @@ export default function ResultView({ patient, onApproveSuccess, lang = 'uz' }) {
                   >
                     Rentgenologik hisobot (Texnik)
                   </button>
+                  <button
+                    onClick={() => setActiveSegmentTab('vlm_critique')}
+                    className={`px-3 py-1.5 rounded-lg text-xs font-bold transition-all cursor-pointer ${
+                      activeSegmentTab === 'vlm_critique'
+                        ? 'bg-white shadow-sm text-primary font-bold'
+                        : 'text-on-surface-variant hover:text-on-surface'
+                    }`}
+                  >
+                    VLM Klinik Audit
+                  </button>
+                  <button
+                    onClick={() => setActiveSegmentTab('treatment')}
+                    className={`px-3 py-1.5 rounded-lg text-xs font-bold transition-all cursor-pointer ${
+                      activeSegmentTab === 'treatment'
+                        ? 'bg-white shadow-sm text-primary font-bold'
+                        : 'text-on-surface-variant hover:text-on-surface'
+                    }`}
+                  >
+                    Davolash Bayonnomasi (SSV)
+                  </button>
                 </div>
               </div>
 
@@ -762,6 +782,77 @@ export default function ResultView({ patient, onApproveSuccess, lang = 'uz' }) {
               {activeSegmentTab === 'technical' && (
                 <div className="p-4 bg-surface rounded-2xl border border-outline-variant/30 leading-relaxed text-sm text-on-surface-variant">
                   <p className="font-mono text-xs whitespace-pre-wrap">{activeScan.findings.technical}</p>
+                </div>
+              )}
+
+              {/* TAB CONTENT: VLM Audit */}
+              {activeSegmentTab === 'vlm_critique' && (
+                <div className="space-y-4">
+                  {activeScan.findings.vlm_critique ? (
+                    <>
+                      <div className="p-4 bg-primary/5 rounded-2xl border border-primary/15">
+                        <h4 className="text-xs font-bold text-primary mb-1 font-geist">Yakuniy VLM Konsultativ Diagnostikasi</h4>
+                        <p className="text-sm text-on-surface font-extrabold mt-1">
+                          {activeScan.findings.vlm_critique.diagnosis}
+                        </p>
+                      </div>
+
+                      <div className="p-4 bg-surface rounded-2xl border border-outline-variant/30">
+                        <h4 className="text-xs font-bold text-on-surface-variant mb-1 font-geist font-medium text-[11px] uppercase tracking-wider">Tibbiy Asoslash (Diagnostic Rationale):</h4>
+                        <p className="text-xs text-on-surface-variant mt-2 leading-relaxed">
+                          {activeScan.findings.vlm_critique.rationale}
+                        </p>
+                      </div>
+
+                      <div className="p-4 bg-amber-500/5 rounded-2xl border border-amber-500/20">
+                        <h4 className="text-xs font-bold text-amber-700 mb-1 font-geist flex items-center gap-1.5">
+                          <span className="material-symbols-outlined text-[16px]">warning</span>
+                          Klinik Nomuvofiqliklar (Conflicting Signals):
+                        </h4>
+                        <p className="text-xs text-on-surface-variant mt-2 leading-relaxed">
+                          {activeScan.findings.vlm_critique.conflicting_signals || "Yo'q (Barcha ko'rsatkichlar mos keladi)"}
+                        </p>
+                      </div>
+
+                      <div className="p-4 bg-success/5 rounded-2xl border border-success/15">
+                        <h4 className="text-xs font-bold text-success mb-1 font-geist">Tavsiya etiladigan Keyingi Qadamlar:</h4>
+                        <p className="text-xs text-on-surface-variant mt-2 leading-relaxed">
+                          {activeScan.findings.vlm_critique.suggested_actions}
+                        </p>
+                      </div>
+                    </>
+                  ) : (
+                    <div className="p-8 text-center text-on-surface-variant/60">
+                      <span className="material-symbols-outlined text-[36px] mb-2 text-on-surface-variant/40">lock</span>
+                      <p className="text-xs font-bold">VLM Klinik Auditi o'tkazilmagan</p>
+                      <p className="text-[10px] mt-1">Ushbu tahlil uchun shoshilinch yoki oraliq holat tahlili bo'lmagani uchun audit talab etilmagan.</p>
+                    </div>
+                  )}
+                </div>
+              )}
+
+              {/* TAB CONTENT: RAG Treatment Plan */}
+              {activeSegmentTab === 'treatment' && (
+                <div className="space-y-4">
+                  <div className="p-4 bg-success/5 rounded-2xl border border-success/15">
+                    <div className="flex gap-3">
+                      <span className="material-symbols-outlined text-success mt-0.5">verified</span>
+                      <div>
+                        <h4 className="font-geist text-xs font-bold text-success">SSV Buyrug'i 180-sonli Klinik Davolash Bayonnomasi</h4>
+                        <p className="text-[10px] text-on-surface-variant mt-0.5">
+                          Ushbu dori-darmon tavsiyalari O'zbekiston Respublikasi Sog'liqni saqlash vazirligi tasdiqlagan klinik protokollar asosida shakllantirilgan.
+                        </p>
+                      </div>
+                    </div>
+                  </div>
+
+                  <div className="p-5 bg-surface-container-lowest rounded-2xl border border-outline-variant/30 shadow-xs relative overflow-hidden">
+                    <div className="absolute top-0 left-0 w-1.5 h-full bg-success"></div>
+                    <h4 className="text-xs font-bold text-on-surface mb-2 font-geist">Rasmiy Klinik Terapiya va Dozalash Sxemasi:</h4>
+                    <p className="text-xs text-on-surface-variant leading-relaxed whitespace-pre-wrap font-mono bg-surface-container-low/30 p-3.5 rounded-xl border border-outline-variant/20">
+                      {activeScan.findings.treatment_plan || "Tegishli davolash bayonnomasi topilmadi."}
+                    </p>
+                  </div>
                 </div>
               )}
             </div>

@@ -71,6 +71,19 @@ class InferenceOrchestrator:
                 "action_required": "⚡ Ambulator kuzatuv va 7 kun ichida takroriy tahlil tavsiya etiladi."
             }
 
+    @staticmethod
+    def get_rag_treatment_plan(diagnosis_uz: str, diagnosis_eng: str) -> str:
+        """Query RAG to retrieve the official treatment and medication guidelines."""
+        from backend.core.rag.rag_engine import build_rag_report
+        try:
+            report = build_rag_report(diagnosis_uz, 1.0, [], lang="uz")
+            protocol_content = report.get("clinical_guideline", "")
+            if protocol_content:
+                return protocol_content
+        except Exception as e:
+            logger.error(f"Error fetching RAG treatment plan: {e}")
+        return "Tegishli klinik protokol topilmadi. Pulmonolog shifokor ko'rigi va dori-darmon sxemasi tavsiya etiladi."
+
     @classmethod
     def process_xray(
         cls,
@@ -81,7 +94,12 @@ class InferenceOrchestrator:
         age: Optional[int] = None,
         gender: Optional[str] = None,
         existing_patient_id: Optional[str] = None,
-        user_email: Optional[str] = None
+        user_email: Optional[str] = None,
+        symptoms: Optional[List[str]] = None,
+        temperature: Optional[float] = None,
+        spo2: Optional[int] = None,
+        crp_level: Optional[float] = None,
+        wbc_count: Optional[float] = None
     ) -> Dict[str, Any]:
         """
         Process uploaded chest X-ray bytes, run ML and Grad-CAM, match or register a patient,
@@ -112,9 +130,10 @@ class InferenceOrchestrator:
         with open(image_dest_path, "wb") as buffer:
             buffer.write(web_png_bytes)
 
-        # 3. Core ML Model Inference
+        # 3. Core ML Model Inference (Swin-ViT with Attention Rollout)
         try:
-            inference_result = run_inference(image_bytes)
+            from backend.core.ml.vit_engine import run_vit_inference
+            inference_result = run_vit_inference(image_bytes)
             raw_predictions = inference_result["predictions"]
         except Exception as e:
             logger.error(f"Inference error in orchestrator: {e}", exc_info=True)
@@ -137,21 +156,78 @@ class InferenceOrchestrator:
 
         prob_percentage = round(float(top_score) * 100, 1)
 
+        # 4.5. Cascaded Local VLM Audit (Confidence Gating)
+        vlm_result = None
+        high_risk = ["Pneumothorax", "Pneumonia", "Edema", "Consolidation", "Effusion"]
+        
+        # Trigger VLM if confidence is intermediate or critical pathology or if doctor supplied text context
+        needs_vlm = (
+            (15.0 <= prob_percentage <= 85.0) or
+            (top_disease_eng in high_risk and prob_percentage >= 20.0) or
+            bool(symptoms or temperature or spo2 or crp_level or wbc_count)
+        )
+        
+        if needs_vlm:
+            from backend.core.vlm.vlm_engine import run_vlm_audit
+            try:
+                vlm_result = run_vlm_audit(
+                    image_path=image_dest_path,
+                    symptoms=symptoms or [],
+                    temperature=temperature,
+                    spo2=spo2,
+                    crp_level=crp_level,
+                    wbc_count=wbc_count,
+                    vit_diagnosis=top_disease_uz,
+                    vit_score=prob_percentage
+                )
+                
+                # Dynamic ensemble correction: if VLM provides a clinical consensus, align it
+                if vlm_result and vlm_result.get("diagnosis"):
+                    vlm_diag = vlm_result["diagnosis"]
+                    if vlm_diag and len(vlm_diag) > 3:
+                        top_disease_uz = vlm_diag
+                        prob_percentage = min(99.0, max(prob_percentage, 50.0))
+            except Exception as ve:
+                logger.error(f"VLM verification audit failed: {ve}", exc_info=True)
+
         # 5. Resolve Urgency Level
         urgency_info = cls.get_urgency_info(top_disease_eng, top_score)
 
-        # 6. Generate Grad-CAM visualization overlay
+        # 6. Generate Explainability Visualization Overlay
         heatmap_filename = f"{file_id}_heatmap.png"
         heatmap_dest_path = os.path.join(UPLOAD_DIR, heatmap_filename)
-        gradcam_target_disease = top_disease_eng if top_disease_eng != "Norma" else (top_pathology["disease"] if top_pathology else "Pneumonia")
-        try:
-            gradcam_bytes, _ = generate_gradcam(image_bytes, disease=gradcam_target_disease)
-            with open(heatmap_dest_path, "wb") as h_buffer:
-                h_buffer.write(gradcam_bytes)
-        except Exception as e:
-            logger.error(f"Grad-CAM generation error in orchestrator: {e}", exc_info=True)
-            with open(heatmap_dest_path, "wb") as h_buffer:
-                h_buffer.write(image_bytes)
+        
+        # If Swin-ViT generated a native Attention Rollout map, overlay it
+        if "heatmap" in inference_result and inference_result["heatmap"] is not None:
+            try:
+                import cv2
+                import numpy as np
+                img_cv = cv2.imread(image_dest_path)
+                h, w = img_cv.shape[:2]
+                
+                attn_map = inference_result["heatmap"]
+                attn_map_resized = cv2.resize(attn_map, (w, h))
+                
+                attn_map_uint8 = np.uint8(255 * attn_map_resized)
+                colormap = cv2.applyColorMap(attn_map_uint8, cv2.COLORMAP_JET)
+                
+                overlay = cv2.addWeighted(img_cv, 0.6, colormap, 0.4, 0)
+                cv2.imwrite(heatmap_dest_path, overlay)
+            except Exception as e:
+                logger.error(f"Swin-ViT Attention Rollout overlay failed: {e}", exc_info=True)
+                with open(heatmap_dest_path, "wb") as h_buffer:
+                    h_buffer.write(image_bytes)
+        else:
+            # Fallback to standard CNN Grad-CAM
+            gradcam_target_disease = top_disease_eng if top_disease_eng != "Norma" else (top_pathology["disease"] if top_pathology else "Pneumonia")
+            try:
+                gradcam_bytes, _ = generate_gradcam(image_bytes, disease=gradcam_target_disease)
+                with open(heatmap_dest_path, "wb") as h_buffer:
+                    h_buffer.write(gradcam_bytes)
+            except Exception as e:
+                logger.error(f"Grad-CAM generation error in orchestrator: {e}", exc_info=True)
+                with open(heatmap_dest_path, "wb") as h_buffer:
+                    h_buffer.write(image_bytes)
 
         # 7. Compile Narrative Findings & Recommendations
         if top_disease_eng == "Norma":
@@ -174,7 +250,9 @@ class InferenceOrchestrator:
             "summary": summary_text,
             "simple_lang": simple_text,
             "precautions": precautions,
-            "technical": technical_text
+            "technical": technical_text,
+            "treatment_plan": cls.get_rag_treatment_plan(top_disease_uz, top_disease_eng),
+            "vlm_critique": vlm_result
         }
 
         # 8. Resolve or Register Patient Identity in SQLite DB

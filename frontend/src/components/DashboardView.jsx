@@ -18,6 +18,13 @@ export default function DashboardView({ onUploadSuccess, currentUser, lang = 'uz
   const [selectedPatientId, setSelectedPatientId] = useState(null);
   const [isSearching, setIsSearching] = useState(false);
 
+  // Clinical context state
+  const [symptoms, setSymptoms] = useState([]);
+  const [temperature, setTemperature] = useState('');
+  const [spo2, setSpo2] = useState('');
+  const [crpLevel, setCrpLevel] = useState('');
+  const [wbcCount, setWbcCount] = useState('');
+
   const [chatMessages, setChatMessages] = useState([
     {
       id: 1,
@@ -121,6 +128,15 @@ export default function DashboardView({ onUploadSuccess, currentUser, lang = 'uz
       formData.append('age', age);
       formData.append('gender', gender);
     }
+    
+    // Append clinical context fields
+    if (symptoms && symptoms.length > 0) {
+      formData.append('symptoms', JSON.stringify(symptoms));
+    }
+    if (temperature) formData.append('temperature', parseFloat(temperature));
+    if (spo2) formData.append('spo2', parseInt(spo2));
+    if (crpLevel) formData.append('crp_level', parseFloat(crpLevel));
+    if (wbcCount) formData.append('wbc_count', parseFloat(wbcCount));
 
     try {
       const response = await fetch('/api/upload', {
@@ -323,6 +339,87 @@ export default function DashboardView({ onUploadSuccess, currentUser, lang = 'uz
                 </div>
               </div>
             </div>
+
+            {/* Clinical context parameters */}
+            <div className="border-t border-surface-container-high pt-4 space-y-4">
+              <h4 className="text-xs font-extrabold text-primary uppercase tracking-wider">Klinik Simptomlar va Laboratoriya Tahlillari</h4>
+              
+              {/* Symptoms Checklist */}
+              <div>
+                <label className="text-xs font-bold text-on-surface-variant mb-2 block">Bemordagi Simptomlar:</label>
+                <div className="flex flex-wrap gap-2">
+                  {["Yo'tal", "Isitma", "Nafas qisilishi", "Balg'am ajralishi", "Ko'krak og'rig'i"].map((symp) => {
+                    const active = symptoms.includes(symp);
+                    return (
+                      <button
+                        key={symp}
+                        type="button"
+                        onClick={() => {
+                          setSymptoms(prev => 
+                            prev.includes(symp) 
+                              ? prev.filter(s => s !== symp) 
+                              : [...prev, symp]
+                          );
+                        }}
+                        className={`text-xs px-3 py-1.5 rounded-full border transition-all ${
+                          active
+                            ? 'bg-primary text-white border-primary shadow-xs'
+                            : 'bg-surface-container-low border-outline-variant/30 text-on-surface-variant hover:bg-surface-container-high'
+                        }`}
+                      >
+                        {symp}
+                      </button>
+                    );
+                  })}
+                </div>
+              </div>
+
+              {/* Lab Values Grid */}
+              <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
+                <div>
+                  <label className="text-[11px] font-bold text-on-surface-variant mb-1 block">Tana harorati (°C)</label>
+                  <input
+                    type="number"
+                    step="0.1"
+                    placeholder="36.6"
+                    value={temperature}
+                    onChange={(e) => setTemperature(e.target.value)}
+                    className="w-full bg-surface-container-low border border-outline-variant/40 rounded-xl px-3 py-2 text-xs outline-none text-on-surface"
+                  />
+                </div>
+                <div>
+                  <label className="text-[11px] font-bold text-on-surface-variant mb-1 block">SpO2 (%)</label>
+                  <input
+                    type="number"
+                    placeholder="98"
+                    value={spo2}
+                    onChange={(e) => setSpo2(e.target.value)}
+                    className="w-full bg-surface-container-low border border-outline-variant/40 rounded-xl px-3 py-2 text-xs outline-none text-on-surface"
+                  />
+                </div>
+                <div>
+                  <label className="text-[11px] font-bold text-on-surface-variant mb-1 block">CRP (mg/L)</label>
+                  <input
+                    type="number"
+                    step="0.1"
+                    placeholder="5.0"
+                    value={crpLevel}
+                    onChange={(e) => setCrpLevel(e.target.value)}
+                    className="w-full bg-surface-container-low border border-outline-variant/40 rounded-xl px-3 py-2 text-xs outline-none text-on-surface"
+                  />
+                </div>
+                <div>
+                  <label className="text-[11px] font-bold text-on-surface-variant mb-1 block">WBC (x10^9/L)</label>
+                  <input
+                    type="number"
+                    step="0.1"
+                    placeholder="6.0"
+                    value={wbcCount}
+                    onChange={(e) => setWbcCount(e.target.value)}
+                    className="w-full bg-surface-container-low border border-outline-variant/40 rounded-xl px-3 py-2 text-xs outline-none text-on-surface"
+                  />
+                </div>
+              </div>
 
             <div className="flex items-center justify-end gap-3 border-t border-surface-container-high pt-4">
               <button

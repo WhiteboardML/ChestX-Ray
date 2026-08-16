@@ -73,12 +73,17 @@ async def upload_xray(
     gender: Optional[str] = Form(None),
     existing_patient_id: Optional[str] = Form(None),
     user_email: Optional[str] = Form(None),
+    symptoms: Optional[str] = Form(None),
+    temperature: Optional[float] = Form(None),
+    spo2: Optional[int] = Form(None),
+    crp_level: Optional[float] = Form(None),
+    wbc_count: Optional[float] = Form(None),
     db: Session = Depends(get_db)
 ):
     """
     Upload X-ray image from Web UI.
     Requires active subscription or available tokens.
-    Runs TorchXRayVision DenseNet-121 inference & Grad-CAM heatmap generation.
+    Runs TorchXRayVision DenseNet-121 / Swin-ViT inference & Qwen2-VL verification.
     """
     filename_lower = file.filename.lower()
     allowed_exts = ('.png', '.jpg', '.jpeg', '.dcm', '.dicom', '.pdf', '.webp', '.bmp', '.tif', '.tiff')
@@ -92,6 +97,18 @@ async def upload_xray(
     if not image_bytes:
         raise HTTPException(status_code=400, detail="Yuklangan fayl bo'sh.")
 
+    symptoms_list = []
+    if symptoms:
+        try:
+            import json
+            parsed = json.loads(symptoms)
+            if isinstance(parsed, list):
+                symptoms_list = [str(item) for item in parsed]
+            else:
+                symptoms_list = [str(parsed)]
+        except Exception:
+            symptoms_list = [s.strip() for s in symptoms.split(",") if s.strip()]
+
     try:
         patient_dict = InferenceOrchestrator.process_xray(
             db=db,
@@ -101,7 +118,12 @@ async def upload_xray(
             age=age,
             gender=gender,
             existing_patient_id=existing_patient_id,
-            user_email=user_email
+            user_email=user_email,
+            symptoms=symptoms_list,
+            temperature=temperature,
+            spo2=spo2,
+            crp_level=crp_level,
+            wbc_count=wbc_count
         )
         return patient_dict
     except ValueError as ve:
