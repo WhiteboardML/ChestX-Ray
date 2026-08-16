@@ -45,7 +45,7 @@ export default function StatsView({ lang = 'uz' }) {
   }
 
   // Calculate approval metrics
-  const totalApprovals = stats.approval_stats.Tasdiqlangan + stats.approval_stats.Rad etilgan;
+  const totalApprovals = stats.approval_stats.Tasdiqlangan + stats.approval_stats["Rad etilgan"];
   const accuracyRate = totalApprovals > 0 
     ? ((stats.approval_stats.Tasdiqlangan / totalApprovals) * 100).toFixed(1)
     : "100";
