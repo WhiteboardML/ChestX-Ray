@@ -48,3 +48,5 @@ htmlcov/
 *.jpg
 *.jpeg
 gradcam_output.png
+!docs/assets/*
+
